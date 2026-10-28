@@ -5,11 +5,14 @@ import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
 import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
 import { RolesGuard } from './common/guards/roles.guard';
 import { AppConfigModule } from './config/config.module';
+import { CloudinaryModule } from './infra/cloudinary/cloudinary.module';
 import { AppLoggerModule } from './infra/logger/logger.module';
 import { PrismaModule } from './infra/prisma/prisma.module';
 import { RedisModule } from './infra/redis/redis.module';
 import { AuthModule } from './modules/auth/auth.module';
+import { CompaniesModule } from './modules/companies/companies.module';
 import { HealthModule } from './modules/health/health.module';
+import { SkillsModule } from './modules/skills/skills.module';
 
 @Module({
   imports: [
@@ -17,7 +20,10 @@ import { HealthModule } from './modules/health/health.module';
     AppLoggerModule,
     PrismaModule,
     RedisModule,
+    CloudinaryModule,
     AuthModule,
+    CompaniesModule,
+    SkillsModule,
     HealthModule,
   ],
   providers: [

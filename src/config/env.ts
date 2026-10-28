@@ -3,6 +3,12 @@ import { z } from 'zod';
 
 export const ENV = Symbol('ENV');
 
+// blank values in .env ("KEY=") count as unset
+const optionalString = z.preprocess(
+  (value) => (value === '' ? undefined : value),
+  z.string().min(1).optional(),
+);
+
 export const envSchema = z.object({
   NODE_ENV: z
     .enum(['development', 'test', 'production'])
@@ -18,6 +24,9 @@ export const envSchema = z.object({
   ACCESS_TOKEN_TTL_SECONDS: z.coerce.number().int().positive().default(900),
   REFRESH_TOKEN_TTL_DAYS: z.coerce.number().int().positive().default(7),
   BCRYPT_ROUNDS: z.coerce.number().int().min(4).max(15).default(10),
+  CLOUDINARY_CLOUD_NAME: optionalString,
+  CLOUDINARY_API_KEY: optionalString,
+  CLOUDINARY_API_SECRET: optionalString,
 });
 
 export type Env = z.infer<typeof envSchema>;

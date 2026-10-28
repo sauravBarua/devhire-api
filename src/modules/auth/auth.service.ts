@@ -3,6 +3,7 @@ import { HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import bcrypt from 'bcrypt';
 import { AppException } from '../../common/errors/app.exception';
+import { isUniqueViolation } from '../../common/errors/prisma-errors';
 import { ENV, type Env } from '../../config/env';
 import type { User } from '../../generated/prisma/client';
 import type { Role } from '../../generated/prisma/enums';
@@ -29,15 +30,6 @@ const DAY_MS = 24 * 60 * 60 * 1000;
 
 const hashToken = (token: string): string =>
   createHash('sha256').update(token).digest('hex');
-
-function isUniqueViolation(error: unknown): boolean {
-  return (
-    typeof error === 'object' &&
-    error !== null &&
-    'code' in error &&
-    error.code === 'P2002'
-  );
-}
 
 @Injectable()
 export class AuthService {

@@ -38,4 +38,21 @@ describe('parseEnv', () => {
       /JWT_ACCESS_SECRET/,
     );
   });
+
+  it('treats blank Cloudinary values as unset', () => {
+    const env = parseEnv({
+      ...base,
+      CLOUDINARY_CLOUD_NAME: '',
+      CLOUDINARY_API_KEY: '',
+    });
+    expect(env.CLOUDINARY_CLOUD_NAME).toBeUndefined();
+    expect(env.CLOUDINARY_API_KEY).toBeUndefined();
+  });
+
+  it('keeps Cloudinary values when set', () => {
+    expect(
+      parseEnv({ ...base, CLOUDINARY_CLOUD_NAME: 'demo' })
+        .CLOUDINARY_CLOUD_NAME,
+    ).toBe('demo');
+  });
 });

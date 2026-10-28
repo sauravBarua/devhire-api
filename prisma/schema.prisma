@@ -24,6 +24,7 @@ model User {
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
   refreshTokens RefreshToken[]
+  company       Company?
 }
 
 model RefreshToken {
@@ -38,4 +39,29 @@ model RefreshToken {
 
   @@index([userId])
   @@index([familyId])
+}
+
+model Company {
+  id           String   @id @default(uuid())
+  ownerId      String   @unique
+  owner        User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  name         String
+  slug         String   @unique
+  description  String?
+  website      String?
+  city         String?
+  logoPublicId String?
+  logoUrl      String?
+  logoSize     Int?
+  logoMime     String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Skill {
+  id        String   @id @default(uuid())
+  slug      String   @unique
+  name      String   @unique
+  aliases   String[] @default([])
+  createdAt DateTime @default(now())
 }

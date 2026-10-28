@@ -15,6 +15,8 @@
     { "key": "adminAccessToken", "value": "" },
     { "key": "candidateId", "value": "" },
     { "key": "recruiterId", "value": "" },
+    { "key": "companyId", "value": "" },
+    { "key": "companySlug", "value": "" },
     { "key": "candidateEmail", "value": "candidatea@devhire.test" },
     { "key": "recruiterEmail", "value": "recruitera@devhire.test" },
     { "key": "adminEmail", "value": "admin@devhire.test" },
@@ -308,6 +310,264 @@
                 "type": "text/javascript",
                 "exec": [
                   "pm.test('204 No Content', () => pm.response.to.have.status(204));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Companies",
+      "item": [
+        {
+          "name": "Create company (recruiterA)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{recruiterAccessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"name\":\"Acme Studio\",\"description\":\"Agence web fictive pour les tests.\",\"website\":\"https://acme.example.com\",\"city\":\"Paris\"}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/companies",
+              "host": ["{{baseUrl}}"],
+              "path": ["companies"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('201 created, or 409 if recruiterA already has a company', () => pm.expect([201, 409]).to.include(pm.response.code));",
+                  "if (pm.response.code === 201) {",
+                  "  const json = pm.response.json();",
+                  "  pm.collectionVariables.set('companyId', json.id);",
+                  "  pm.collectionVariables.set('companySlug', json.slug);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get my company (recruiterA)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{recruiterAccessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/companies/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["companies", "me"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('200 OK', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.collectionVariables.set('companyId', json.id);",
+                  "pm.collectionVariables.set('companySlug', json.slug);",
+                  "pm.test('has a slug', () => pm.expect(json.slug).to.be.a('string'));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update my company (recruiterA)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{recruiterAccessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"city\":\"Lyon\",\"description\":\"Agence web fictive, mise à jour.\"}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/companies/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["companies", "me"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('200 OK', () => pm.response.to.have.status(200));",
+                  "pm.test('city updated', () => pm.expect(pm.response.json().city).to.eql('Lyon'));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Upload logo (recruiterA)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{recruiterAccessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [{ "key": "file", "type": "file", "src": [] }]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/companies/me/logo",
+              "host": ["{{baseUrl}}"],
+              "path": ["companies", "me", "logo"]
+            },
+            "description": "Select a PNG, JPEG or WebP file (max 2 MB) in the 'file' field. Needs Cloudinary values in .env, otherwise 503 UPLOADS_NOT_CONFIGURED."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('200 OK, or 503 when Cloudinary is not configured', () => pm.expect([200, 503]).to.include(pm.response.code));",
+                  "if (pm.response.code === 200) {",
+                  "  pm.test('logoUrl is set', () => pm.expect(pm.response.json().logoUrl).to.be.a('string'));",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Candidate cannot create a company",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{candidateAccessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\"name\":\"Should Fail\"}" },
+            "url": {
+              "raw": "{{baseUrl}}/companies",
+              "host": ["{{baseUrl}}"],
+              "path": ["companies"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('403 Forbidden', () => pm.response.to.have.status(403));",
+                  "pm.test('error code', () => pm.expect(pm.response.json().code).to.eql('AUTH_FORBIDDEN'));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get company by slug (public)",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/companies/{{companySlug}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["companies", "{{companySlug}}"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('200 OK', () => pm.response.to.have.status(200));",
+                  "pm.test('slug matches', () => pm.expect(pm.response.json().slug).to.eql(pm.collectionVariables.get('companySlug')));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Skills",
+      "item": [
+        {
+          "name": "List skills (public)",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/skills",
+              "host": ["{{baseUrl}}"],
+              "path": ["skills"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('200 OK', () => pm.response.to.have.status(200));",
+                  "const skills = pm.response.json();",
+                  "pm.test('seeded skills are returned', () => pm.expect(skills.length).to.be.above(20));",
+                  "pm.test('Node.js carries its aliases', () => {",
+                  "  const node = skills.find((s) => s.slug === 'nodejs');",
+                  "  pm.expect(node.aliases).to.include('node');",
+                  "});"
                 ]
               }
             }
