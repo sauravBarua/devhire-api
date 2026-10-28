@@ -14,6 +14,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { CompaniesModule } from './modules/companies/companies.module';
 import { HealthModule } from './modules/health/health.module';
 import { JobsModule } from './modules/jobs/jobs.module';
+import { SearchModule } from './modules/search/search.module';
 import { SkillsModule } from './modules/skills/skills.module';
 
 @Module({
@@ -28,6 +29,7 @@ import { SkillsModule } from './modules/skills/skills.module';
     CompaniesModule,
     SkillsModule,
     JobsModule,
+    SearchModule,
     HealthModule,
   ],
   providers: [

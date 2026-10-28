@@ -72,6 +72,7 @@
     "@nestjs/testing": "^11.2.8",
     "@swc/core": "^1.16.20",
     "@testcontainers/postgresql": "^12.2.1",
+    "@testcontainers/redis": "^12.2.1",
     "@types/bcrypt": "^6.0.0",
     "@types/cookie-parser": "^1.4.10",
     "@types/express": "^5.0.6",

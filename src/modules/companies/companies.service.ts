@@ -80,6 +80,15 @@ export class CompaniesService {
     return company ? toView(company) : null;
   }
 
+  // public entry point for other modules (public job views)
+  async findByIds(ids: string[]): Promise<CompanyView[]> {
+    if (ids.length === 0) return [];
+    const rows = await this.prisma.company.findMany({
+      where: { id: { in: ids } },
+    });
+    return rows.map(toView);
+  }
+
   async getOwn(ownerId: string): Promise<CompanyView> {
     return toView(await this.requireOwned(ownerId));
   }

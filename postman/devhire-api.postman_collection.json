@@ -21,6 +21,8 @@
     { "key": "draftJobId", "value": "" },
     { "key": "jobPublishedAt", "value": "" },
     { "key": "jobExpiresAt", "value": "" },
+    { "key": "searchJobId", "value": "" },
+    { "key": "searchCursor", "value": "" },
     { "key": "candidateEmail", "value": "candidatea@devhire.test" },
     { "key": "recruiterEmail", "value": "recruitera@devhire.test" },
     { "key": "adminEmail", "value": "admin@devhire.test" },
@@ -1017,6 +1019,278 @@
                 "exec": [
                   "pm.test('403 Forbidden', () => pm.response.to.have.status(403));",
                   "pm.test('error code', () => pm.expect(pm.response.json().code).to.eql('AUTH_FORBIDDEN'));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Search (public)",
+      "item": [
+        {
+          "name": "Search - first page",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/jobs?limit=5",
+              "host": ["{{baseUrl}}"],
+              "path": ["jobs"],
+              "query": [{ "key": "limit", "value": "5" }]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('200 OK', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test('at most 5 items', () => pm.expect(json.items.length).to.be.within(1, 5));",
+                  "pm.test('only PUBLISHED and open jobs', () => json.items.forEach((j) => { pm.expect(j.status).to.eql('PUBLISHED'); pm.expect(j.isOpen).to.eql(true); }));",
+                  "pm.test('first page has total and facets', () => { pm.expect(json.total).to.be.a('number'); pm.expect(json.facets.category).to.be.an('array'); });",
+                  "pm.test('newest first', () => { const d = json.items.map((j) => new Date(j.publishedAt).getTime()); pm.expect(d).to.eql([...d].sort((a, b) => b - a)); });",
+                  "pm.collectionVariables.set('searchCursor', json.nextCursor || '');",
+                  "pm.collectionVariables.set('searchJobId', json.items[0].id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Search - next page (cursor)",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/jobs?limit=5&cursor={{searchCursor}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["jobs"],
+              "query": [
+                { "key": "limit", "value": "5" },
+                { "key": "cursor", "value": "{{searchCursor}}" }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('200 OK', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test('later pages skip total and facets', () => { pm.expect(json.total).to.eql(null); pm.expect(json.facets).to.eql(null); });",
+                  "pm.test('has items', () => pm.expect(json.items.length).to.be.above(0));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Search - Node.js (AND, ranked)",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/jobs?q=node.js&limit=20",
+              "host": ["{{baseUrl}}"],
+              "path": ["jobs"],
+              "query": [
+                { "key": "q", "value": "node.js" },
+                { "key": "limit", "value": "20" }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('200 OK', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test('has results', () => pm.expect(json.items.length).to.be.above(0));",
+                  "pm.test('every result really has Node.js (no Java/Python/.NET-only jobs)', () => json.items.forEach((j) => pm.expect(j.skills.map((s) => s.slug)).to.include('nodejs')));",
+                  "pm.test('results carry an excerpt, not the full description', () => { pm.expect(json.items[0].excerpt).to.be.a('string'); pm.expect(json.items[0]).to.not.have.property('description'); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Search - filters (category, remote, skills, posted)",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/jobs?category=backend,fullstack&remotePolicy=full_remote&skills=typescript&postedWithin=30d&sort=date",
+              "host": ["{{baseUrl}}"],
+              "path": ["jobs"],
+              "query": [
+                { "key": "category", "value": "backend,fullstack" },
+                { "key": "remotePolicy", "value": "full_remote" },
+                { "key": "skills", "value": "typescript" },
+                { "key": "postedWithin", "value": "30d" },
+                { "key": "sort", "value": "date" }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('200 OK', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test('category is BACKEND or FULLSTACK', () => json.items.forEach((j) => pm.expect(['BACKEND', 'FULLSTACK']).to.include(j.category)));",
+                  "pm.test('all FULL_REMOTE', () => json.items.forEach((j) => pm.expect(j.remotePolicy).to.eql('FULL_REMOTE')));",
+                  "pm.test('all have TypeScript', () => json.items.forEach((j) => pm.expect(j.skills.map((s) => s.slug)).to.include('typescript')));",
+                  "pm.test('posted within 30 days', () => json.items.forEach((j) => pm.expect(j.postedDaysAgo).to.be.at.most(30)));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Search - city and salary",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/jobs?city=paris&salaryMin=40000",
+              "host": ["{{baseUrl}}"],
+              "path": ["jobs"],
+              "query": [
+                { "key": "city", "value": "paris" },
+                { "key": "salaryMin", "value": "40000" }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('200 OK', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test('all in Paris', () => json.items.forEach((j) => pm.expect(j.city).to.eql('Paris')));",
+                  "pm.test('salary reaches the requested minimum', () => json.items.forEach((j) => pm.expect(Math.max(j.salaryMax || 0, j.salaryMin || 0)).to.be.at.least(40000)));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Search - invalid cursor",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/jobs?cursor=not-a-cursor",
+              "host": ["{{baseUrl}}"],
+              "path": ["jobs"],
+              "query": [{ "key": "cursor", "value": "not-a-cursor" }]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('400 Bad Request', () => pm.response.to.have.status(400));",
+                  "pm.test('error code', () => pm.expect(pm.response.json().code).to.eql('INVALID_CURSOR'));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Search - invalid filter value",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/jobs?postedWithin=1y",
+              "host": ["{{baseUrl}}"],
+              "path": ["jobs"],
+              "query": [{ "key": "postedWithin", "value": "1y" }]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('400 Bad Request', () => pm.response.to.have.status(400));",
+                  "pm.test('error code', () => pm.expect(pm.response.json().code).to.eql('VALIDATION_ERROR'));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get public job",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/jobs/{{searchJobId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["jobs", "{{searchJobId}}"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('200 OK', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test('id matches', () => pm.expect(json.id).to.eql(pm.collectionVariables.get('searchJobId')));",
+                  "pm.test('has full description and company', () => { pm.expect(json.description).to.be.a('string'); pm.expect(json.company.name).to.be.a('string'); pm.expect(json.company.slug).to.be.a('string'); });",
+                  "pm.test('has isOpen flag and postedDaysAgo', () => { pm.expect(json.isOpen).to.be.a('boolean'); pm.expect(json.postedDaysAgo).to.be.a('number'); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get public job - unknown id",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/jobs/00000000-0000-0000-0000-000000000000",
+              "host": ["{{baseUrl}}"],
+              "path": ["jobs", "00000000-0000-0000-0000-000000000000"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('404 Not Found', () => pm.response.to.have.status(404));",
+                  "pm.test('error code', () => pm.expect(pm.response.json().code).to.eql('JOB_NOT_FOUND'));"
                 ]
               }
             }

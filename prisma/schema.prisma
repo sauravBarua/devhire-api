@@ -122,6 +122,7 @@ model Job {
   publishedAt     DateTime?
   expiresAt       DateTime?
   closedAt        DateTime?
+  searchVector    Unsupported("tsvector")?
   createdAt       DateTime        @default(now())
   updatedAt       DateTime        @updatedAt
   skills          JobSkill[]
@@ -129,8 +130,8 @@ model Job {
   @@index([status, publishedAt])
   @@index([status, expiresAt])
   @@index([companyId])
+  @@index([searchVector], type: Gin)
 }
-
 model JobSkill {
   jobId   String
   skillId String
