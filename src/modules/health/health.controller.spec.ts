@@ -1,5 +1,5 @@
-import { ServiceUnavailableException } from '@nestjs/common';
 import { describe, expect, it, vi } from 'vitest';
+import { AppException } from '../../common/errors/app.exception';
 import type { PrismaService } from '../../infra/prisma/prisma.service';
 import type { RedisService } from '../../infra/redis/redis.service';
 import { HealthController } from './health.controller';
@@ -28,15 +28,21 @@ describe('HealthController', () => {
     });
   });
 
-  it('ready throws 503 when redis is down', async () => {
-    await expect(build(true, false).ready()).rejects.toBeInstanceOf(
-      ServiceUnavailableException,
-    );
+  it('ready throws 503 with details when redis is down', async () => {
+    const error = await build(true, false)
+      .ready()
+      .catch((e: unknown) => e);
+    expect(error).toBeInstanceOf(AppException);
+    expect((error as AppException).getStatus()).toBe(503);
+    expect((error as AppException).details).toEqual({
+      database: 'up',
+      redis: 'down',
+    });
   });
 
   it('ready throws 503 when the database is down', async () => {
     await expect(build(false, true).ready()).rejects.toBeInstanceOf(
-      ServiceUnavailableException,
+      AppException,
     );
   });
 });

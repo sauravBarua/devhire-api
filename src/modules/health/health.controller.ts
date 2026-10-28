@@ -1,7 +1,10 @@
-import { Controller, Get, ServiceUnavailableException } from '@nestjs/common';
+import { Controller, Get, HttpStatus } from '@nestjs/common';
+import { Public } from '../../common/decorators/public.decorator';
+import { AppException } from '../../common/errors/app.exception';
 import { PrismaService } from '../../infra/prisma/prisma.service';
 import { RedisService } from '../../infra/redis/redis.service';
 
+@Public()
 @Controller('health')
 export class HealthController {
   constructor(
@@ -24,13 +27,12 @@ export class HealthController {
       this.redis.ping(),
     ]);
     if (!database || !redis) {
-      throw new ServiceUnavailableException({
-        status: 'error',
-        checks: {
-          database: database ? 'up' : 'down',
-          redis: redis ? 'up' : 'down',
-        },
-      });
+      throw new AppException(
+        HttpStatus.SERVICE_UNAVAILABLE,
+        'SERVICE_UNAVAILABLE',
+        'A dependency is unavailable',
+        { database: database ? 'up' : 'down', redis: redis ? 'up' : 'down' },
+      );
     }
     return { status: 'ok', checks: { database: 'up', redis: 'up' } };
   }

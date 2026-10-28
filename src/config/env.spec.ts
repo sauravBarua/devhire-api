@@ -4,6 +4,7 @@ import { parseEnv } from './env';
 const base = {
   DATABASE_URL: 'postgresql://u:p@localhost:5432/db?schema=public',
   REDIS_URL: 'redis://localhost:6379',
+  JWT_ACCESS_SECRET: 'x'.repeat(32),
 };
 
 describe('parseEnv', () => {
@@ -12,6 +13,7 @@ describe('parseEnv', () => {
     expect(env.PORT).toBe(3000);
     expect(env.NODE_ENV).toBe('development');
     expect(env.JOB_DEFAULT_EXPIRY_DAYS).toBe(30);
+    expect(env.ACCESS_TOKEN_TTL_SECONDS).toBe(900);
   });
 
   it('coerces JOB_DEFAULT_EXPIRY_DAYS to a number', () => {
@@ -22,12 +24,18 @@ describe('parseEnv', () => {
   });
 
   it('throws when DATABASE_URL is missing', () => {
-    expect(() => parseEnv({ REDIS_URL: base.REDIS_URL })).toThrow(
-      /DATABASE_URL/,
-    );
+    const rest: NodeJS.ProcessEnv = { ...base };
+    delete rest.DATABASE_URL;
+    expect(() => parseEnv(rest)).toThrow(/DATABASE_URL/);
   });
 
   it('rejects a non-positive expiry', () => {
     expect(() => parseEnv({ ...base, JOB_DEFAULT_EXPIRY_DAYS: '0' })).toThrow();
+  });
+
+  it('rejects a short JWT secret', () => {
+    expect(() => parseEnv({ ...base, JWT_ACCESS_SECRET: 'short' })).toThrow(
+      /JWT_ACCESS_SECRET/,
+    );
   });
 });

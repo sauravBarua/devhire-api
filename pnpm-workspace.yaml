@@ -1,3 +1,9 @@
 allowBuilds:
   '@prisma/engines': true
+  '@swc/core': true
+  bcrypt: true
+  cpu-features: true
+  esbuild: true
   prisma: false
+  protobufjs: true
+  ssh2: true
