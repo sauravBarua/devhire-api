@@ -10,6 +10,7 @@ import { CloudinaryModule } from './infra/cloudinary/cloudinary.module';
 import { AppLoggerModule } from './infra/logger/logger.module';
 import { PrismaModule } from './infra/prisma/prisma.module';
 import { RedisModule } from './infra/redis/redis.module';
+import { ApplicationsModule } from './modules/applications/applications.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { CompaniesModule } from './modules/companies/companies.module';
 import { HealthModule } from './modules/health/health.module';
@@ -30,6 +31,7 @@ import { SkillsModule } from './modules/skills/skills.module';
     SkillsModule,
     JobsModule,
     SearchModule,
+    ApplicationsModule,
     HealthModule,
   ],
   providers: [

@@ -50,6 +50,14 @@ enum ExperienceLevel {
   SENIOR
 }
 
+enum ApplicationStatus {
+  NEW
+  REVIEWED
+  INTERVIEW
+  REJECTED
+  HIRED
+}
+
 model User {
   id            String         @id @default(uuid())
   email         String         @unique
@@ -61,6 +69,7 @@ model User {
   updatedAt     DateTime       @updatedAt
   refreshTokens RefreshToken[]
   company       Company?
+  applications  Application[]
 }
 
 model RefreshToken {
@@ -126,12 +135,14 @@ model Job {
   createdAt       DateTime        @default(now())
   updatedAt       DateTime        @updatedAt
   skills          JobSkill[]
+  applications    Application[]
 
   @@index([status, publishedAt])
   @@index([status, expiresAt])
   @@index([companyId])
   @@index([searchVector], type: Gin)
 }
+
 model JobSkill {
   jobId   String
   skillId String
@@ -140,4 +151,24 @@ model JobSkill {
 
   @@id([jobId, skillId])
   @@index([skillId])
+}
+
+model Application {
+  id          String            @id @default(uuid())
+  jobId       String
+  job         Job               @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  candidateId String
+  candidate   User              @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  status      ApplicationStatus @default(NEW)
+  coverLetter String?
+  cvPublicId  String
+  cvUrl       String
+  cvSize      Int
+  cvMime      String
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  @@unique([jobId, candidateId])
+  @@index([candidateId, createdAt])
+  @@index([jobId, status])
 }

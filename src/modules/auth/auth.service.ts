@@ -155,6 +155,15 @@ export class AuthService {
     return this.toPublicUser(user);
   }
 
+  // public entry point for other modules (recruiters viewing applicants)
+  async findProfilesByIds(ids: string[]): Promise<PublicUser[]> {
+    if (ids.length === 0) return [];
+    const users = await this.prisma.user.findMany({
+      where: { id: { in: ids } },
+    });
+    return users.map((user) => this.toPublicUser(user));
+  }
+
   private async issueSession(user: User, familyId: string): Promise<Session> {
     const accessToken = await this.jwt.signAsync({
       sub: user.id,

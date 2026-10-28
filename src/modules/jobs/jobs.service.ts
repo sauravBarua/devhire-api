@@ -92,6 +92,16 @@ export class JobsService {
     return this.viewOne(await this.requireOwnedJob(companyId, jobId));
   }
 
+  // public entry point for other modules (applications): does this recruiter own the job?
+  async ownsJob(userId: string, jobId: string): Promise<boolean> {
+    const company = await this.companies.findByOwnerId(userId);
+    if (!company) return false;
+    const count = await this.prisma.job.count({
+      where: { id: jobId, companyId: company.id },
+    });
+    return count > 0;
+  }
+
   async update(
     userId: string,
     jobId: string,

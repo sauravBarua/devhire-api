@@ -1,5 +1,10 @@
+import { randomUUID } from 'node:crypto';
 import { HttpStatus, Inject, Injectable, Logger } from '@nestjs/common';
-import { v2 as cloudinary, type UploadApiResponse } from 'cloudinary';
+import {
+  v2 as cloudinary,
+  type UploadApiOptions,
+  type UploadApiResponse,
+} from 'cloudinary';
 import { AppException } from '../../common/errors/app.exception';
 import { ENV, type Env } from '../../config/env';
 
@@ -9,6 +14,8 @@ export interface StoredFile {
   size: number;
   mime: string;
 }
+
+export type CloudinaryResourceType = 'image' | 'raw';
 
 @Injectable()
 export class CloudinaryService {
@@ -30,16 +37,50 @@ export class CloudinaryService {
     }
   }
 
-  async uploadImage(
+  uploadImage(
     buffer: Buffer,
     mime: string,
     folder: string,
+  ): Promise<StoredFile> {
+    return this.upload(buffer, mime, { folder, resource_type: 'image' });
+  }
+
+  // PDFs go up as "raw" files; the random public id keeps the .pdf extension in the URL
+  uploadPdf(buffer: Buffer, folder: string): Promise<StoredFile> {
+    return this.upload(buffer, 'application/pdf', {
+      folder,
+      resource_type: 'raw',
+      public_id: `${randomUUID()}.pdf`,
+    });
+  }
+
+  // best effort: a failed cleanup must never fail the request
+  async destroy(
+    publicId: string,
+    resourceType: CloudinaryResourceType = 'image',
+  ): Promise<void> {
+    if (!this.configured) return;
+    try {
+      await cloudinary.uploader.destroy(publicId, {
+        resource_type: resourceType,
+      });
+    } catch (error) {
+      this.logger.warn(
+        `Could not delete ${publicId}: ${error instanceof Error ? error.message : 'unknown'}`,
+      );
+    }
+  }
+
+  private async upload(
+    buffer: Buffer,
+    mime: string,
+    options: UploadApiOptions,
   ): Promise<StoredFile> {
     this.assertConfigured();
     try {
       const result = await new Promise<UploadApiResponse>((resolve, reject) => {
         const stream = cloudinary.uploader.upload_stream(
-          { folder, resource_type: 'image' },
+          options,
           (error, uploaded) => {
             if (error || !uploaded) {
               reject(new Error(error?.message ?? 'Empty Cloudinary response'));
@@ -64,18 +105,6 @@ export class CloudinaryService {
         HttpStatus.BAD_GATEWAY,
         'UPLOAD_FAILED',
         'File upload failed',
-      );
-    }
-  }
-
-  // best effort: a failed cleanup must never fail the request
-  async destroy(publicId: string): Promise<void> {
-    if (!this.configured) return;
-    try {
-      await cloudinary.uploader.destroy(publicId);
-    } catch (error) {
-      this.logger.warn(
-        `Could not delete ${publicId}: ${error instanceof Error ? error.message : 'unknown'}`,
       );
     }
   }
