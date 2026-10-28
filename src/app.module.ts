@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { APP_FILTER, APP_GUARD, APP_PIPE } from '@nestjs/core';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 import { ZodValidationPipe } from 'nestjs-zod';
 import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
 import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
@@ -12,10 +13,12 @@ import { RedisModule } from './infra/redis/redis.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { CompaniesModule } from './modules/companies/companies.module';
 import { HealthModule } from './modules/health/health.module';
+import { JobsModule } from './modules/jobs/jobs.module';
 import { SkillsModule } from './modules/skills/skills.module';
 
 @Module({
   imports: [
+    EventEmitterModule.forRoot(),
     AppConfigModule,
     AppLoggerModule,
     PrismaModule,
@@ -24,6 +27,7 @@ import { SkillsModule } from './modules/skills/skills.module';
     AuthModule,
     CompaniesModule,
     SkillsModule,
+    JobsModule,
     HealthModule,
   ],
   providers: [

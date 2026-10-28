@@ -34,8 +34,8 @@ export async function createTestApp(
     REDIS_URL: 'redis://localhost:6379',
     JWT_ACCESS_SECRET: 'test-secret-test-secret-test-secret-1234',
     BCRYPT_ROUNDS: '4',
+    JOB_DEFAULT_EXPIRY_DAYS: '30',
   });
-
   execSync('pnpm exec prisma migrate deploy', {
     env: { ...process.env, DATABASE_URL: databaseUrl },
     stdio: 'inherit',

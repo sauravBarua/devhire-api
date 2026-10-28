@@ -14,6 +14,42 @@ enum Role {
   ADMIN
 }
 
+enum JobStatus {
+  DRAFT
+  PUBLISHED
+  CLOSED
+  EXPIRED
+}
+
+enum JobCategory {
+  FRONTEND
+  BACKEND
+  FULLSTACK
+  DEVOPS
+  QA
+  MOBILE
+}
+
+enum ContractType {
+  CDI
+  CDD
+  STAGE
+  ALTERNANCE
+  FREELANCE
+}
+
+enum RemotePolicy {
+  FULL_REMOTE
+  HYBRID
+  ON_SITE
+}
+
+enum ExperienceLevel {
+  JUNIOR
+  MID
+  SENIOR
+}
+
 model User {
   id            String         @id @default(uuid())
   email         String         @unique
@@ -56,12 +92,51 @@ model Company {
   logoMime     String?
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+  jobs         Job[]
 }
 
 model Skill {
-  id        String   @id @default(uuid())
-  slug      String   @unique
-  name      String   @unique
-  aliases   String[] @default([])
-  createdAt DateTime @default(now())
+  id        String     @id @default(uuid())
+  slug      String     @unique
+  name      String     @unique
+  aliases   String[]   @default([])
+  createdAt DateTime   @default(now())
+  jobs      JobSkill[]
+}
+
+model Job {
+  id              String          @id @default(uuid())
+  companyId       String
+  company         Company         @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  title           String
+  description     String
+  category        JobCategory
+  contractType    ContractType
+  remotePolicy    RemotePolicy
+  experienceLevel ExperienceLevel
+  city            String?
+  region          String?
+  salaryMin       Int?
+  salaryMax       Int?
+  status          JobStatus       @default(DRAFT)
+  publishedAt     DateTime?
+  expiresAt       DateTime?
+  closedAt        DateTime?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  skills          JobSkill[]
+
+  @@index([status, publishedAt])
+  @@index([status, expiresAt])
+  @@index([companyId])
+}
+
+model JobSkill {
+  jobId   String
+  skillId String
+  job     Job    @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  skill   Skill  @relation(fields: [skillId], references: [id], onDelete: Cascade)
+
+  @@id([jobId, skillId])
+  @@index([skillId])
 }

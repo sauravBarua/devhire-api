@@ -17,6 +17,10 @@
     { "key": "recruiterId", "value": "" },
     { "key": "companyId", "value": "" },
     { "key": "companySlug", "value": "" },
+    { "key": "jobId", "value": "" },
+    { "key": "draftJobId", "value": "" },
+    { "key": "jobPublishedAt", "value": "" },
+    { "key": "jobExpiresAt", "value": "" },
     { "key": "candidateEmail", "value": "candidatea@devhire.test" },
     { "key": "recruiterEmail", "value": "recruitera@devhire.test" },
     { "key": "adminEmail", "value": "admin@devhire.test" },
@@ -568,6 +572,451 @@
                   "  const node = skills.find((s) => s.slug === 'nodejs');",
                   "  pm.expect(node.aliases).to.include('node');",
                   "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Jobs (recruiter)",
+      "item": [
+        {
+          "name": "Create job (recruiterA)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{recruiterAccessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"title\":\"Développeur Node.js senior\",\"description\":\"Rejoignez une équipe produit pour construire des API fiables et maintenables.\",\"category\":\"BACKEND\",\"contractType\":\"CDI\",\"remotePolicy\":\"HYBRID\",\"experienceLevel\":\"SENIOR\",\"city\":\"Paris\",\"salaryMin\":50000,\"salaryMax\":70000,\"skills\":[\"nodejs\",\"typescript\"]}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/recruiter/jobs",
+              "host": ["{{baseUrl}}"],
+              "path": ["recruiter", "jobs"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('201 Created', () => pm.response.to.have.status(201));",
+                  "const json = pm.response.json();",
+                  "pm.test('starts as DRAFT', () => pm.expect(json.status).to.eql('DRAFT'));",
+                  "pm.test('skills resolved', () => pm.expect(json.skills.map((s) => s.slug)).to.have.members(['nodejs', 'typescript']));",
+                  "pm.collectionVariables.set('jobId', json.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List my jobs (recruiterA)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{recruiterAccessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/recruiter/jobs?limit=20",
+              "host": ["{{baseUrl}}"],
+              "path": ["recruiter", "jobs"],
+              "query": [{ "key": "limit", "value": "20" }]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('200 OK', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test('contains the new job', () => pm.expect(json.items.map((j) => j.id)).to.include(pm.collectionVariables.get('jobId')));",
+                  "pm.test('has nextCursor field', () => pm.expect(json).to.have.property('nextCursor'));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get my job (recruiterA)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{recruiterAccessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/recruiter/jobs/{{jobId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["recruiter", "jobs", "{{jobId}}"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('200 OK', () => pm.response.to.have.status(200));",
+                  "pm.test('id matches', () => pm.expect(pm.response.json().id).to.eql(pm.collectionVariables.get('jobId')));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update my job (recruiterA)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{recruiterAccessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"title\":\"Développeur Node.js / NestJS senior\",\"skills\":[\"nodejs\",\"nestjs\",\"typescript\"]}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/recruiter/jobs/{{jobId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["recruiter", "jobs", "{{jobId}}"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('200 OK', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test('title updated', () => pm.expect(json.title).to.eql('Développeur Node.js / NestJS senior'));",
+                  "pm.test('3 skills', () => pm.expect(json.skills).to.have.length(3));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Publish job (DRAFT -> PUBLISHED)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{recruiterAccessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/recruiter/jobs/{{jobId}}/publish",
+              "host": ["{{baseUrl}}"],
+              "path": ["recruiter", "jobs", "{{jobId}}", "publish"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('200 OK', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test('PUBLISHED', () => pm.expect(json.status).to.eql('PUBLISHED'));",
+                  "pm.test('expiresAt is 30 days after publishedAt', () => {",
+                  "  const diff = new Date(json.expiresAt) - new Date(json.publishedAt);",
+                  "  pm.expect(diff).to.eql(30 * 24 * 60 * 60 * 1000);",
+                  "});",
+                  "pm.collectionVariables.set('jobPublishedAt', json.publishedAt);",
+                  "pm.collectionVariables.set('jobExpiresAt', json.expiresAt);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Publish again (forbidden transition)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{recruiterAccessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/recruiter/jobs/{{jobId}}/publish",
+              "host": ["{{baseUrl}}"],
+              "path": ["recruiter", "jobs", "{{jobId}}", "publish"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('409 Conflict', () => pm.response.to.have.status(409));",
+                  "pm.test('error code', () => pm.expect(pm.response.json().code).to.eql('JOB_INVALID_TRANSITION'));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Delete published job (forbidden)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{recruiterAccessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/recruiter/jobs/{{jobId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["recruiter", "jobs", "{{jobId}}"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('409 Conflict', () => pm.response.to.have.status(409));",
+                  "pm.test('error code', () => pm.expect(pm.response.json().code).to.eql('JOB_DELETE_NOT_ALLOWED'));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Close job (PUBLISHED -> CLOSED)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{recruiterAccessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/recruiter/jobs/{{jobId}}/close",
+              "host": ["{{baseUrl}}"],
+              "path": ["recruiter", "jobs", "{{jobId}}", "close"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('200 OK', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test('CLOSED', () => pm.expect(json.status).to.eql('CLOSED'));",
+                  "pm.test('closedAt is set', () => pm.expect(json.closedAt).to.be.a('string'));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Renew job (CLOSED -> PUBLISHED)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{recruiterAccessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/recruiter/jobs/{{jobId}}/renew",
+              "host": ["{{baseUrl}}"],
+              "path": ["recruiter", "jobs", "{{jobId}}", "renew"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('200 OK', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test('PUBLISHED again', () => pm.expect(json.status).to.eql('PUBLISHED'));",
+                  "pm.test('closedAt cleared', () => pm.expect(json.closedAt).to.eql(null));",
+                  "pm.test('publishedAt is kept', () => pm.expect(json.publishedAt).to.eql(pm.collectionVariables.get('jobPublishedAt')));",
+                  "pm.test('expiresAt moved forward', () => pm.expect(new Date(json.expiresAt).getTime()).to.be.above(new Date(pm.collectionVariables.get('jobExpiresAt')).getTime()));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create draft (to delete)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{recruiterAccessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"title\":\"Stage développeur React\",\"description\":\"Stage de fin d'études sur une application React en production.\",\"category\":\"FRONTEND\",\"contractType\":\"STAGE\",\"remotePolicy\":\"ON_SITE\",\"experienceLevel\":\"JUNIOR\",\"city\":\"Lille\",\"skills\":[\"react\"]}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/recruiter/jobs",
+              "host": ["{{baseUrl}}"],
+              "path": ["recruiter", "jobs"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('201 Created', () => pm.response.to.have.status(201));",
+                  "pm.collectionVariables.set('draftJobId', pm.response.json().id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Delete draft job",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{recruiterAccessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/recruiter/jobs/{{draftJobId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["recruiter", "jobs", "{{draftJobId}}"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('204 No Content', () => pm.response.to.have.status(204));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Candidate cannot list recruiter jobs",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{candidateAccessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/recruiter/jobs",
+              "host": ["{{baseUrl}}"],
+              "path": ["recruiter", "jobs"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('403 Forbidden', () => pm.response.to.have.status(403));",
+                  "pm.test('error code', () => pm.expect(pm.response.json().code).to.eql('AUTH_FORBIDDEN'));"
                 ]
               }
             }
