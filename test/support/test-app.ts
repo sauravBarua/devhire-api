@@ -60,6 +60,8 @@ export async function createTestApp(
     THROTTLE_STRICT_LIMIT: '100000',
     // blank on purpose: dotenv would otherwise fill it from a developer .env and tests would report to Sentry
     SENTRY_DSN: '',
+    // the docs are only mounted by the suite that tests them
+    DOCS_ENABLED: 'false',
     ...extraEnv,
   });
 

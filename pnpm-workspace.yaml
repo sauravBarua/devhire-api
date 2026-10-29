@@ -1,5 +1,6 @@
 allowBuilds:
   '@prisma/engines': true
+  '@scarf/scarf': true
   '@swc/core': true
   bcrypt: true
   cpu-features: true

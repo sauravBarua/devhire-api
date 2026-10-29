@@ -122,4 +122,24 @@ describe('parseEnv', () => {
       /SHUTDOWN_TIMEOUT_MS/,
     );
   });
+
+  it('leaves COOKIE_SECURE and DOCS_ENABLED unset by default, and treats blanks as unset', () => {
+    const env = parseEnv({ ...base, COOKIE_SECURE: '', DOCS_ENABLED: '' });
+    expect(env.COOKIE_SECURE).toBeUndefined();
+    expect(env.DOCS_ENABLED).toBeUndefined();
+    expect(parseEnv(base).COOKIE_SECURE).toBeUndefined();
+  });
+
+  it('parses COOKIE_SECURE and DOCS_ENABLED as booleans', () => {
+    const env = parseEnv({
+      ...base,
+      COOKIE_SECURE: 'false',
+      DOCS_ENABLED: 'true',
+    });
+    expect(env.COOKIE_SECURE).toBe(false);
+    expect(env.DOCS_ENABLED).toBe(true);
+    expect(() => parseEnv({ ...base, COOKIE_SECURE: 'maybe' })).toThrow(
+      /COOKIE_SECURE/,
+    );
+  });
 });

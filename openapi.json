@@ -1,0 +1,4497 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/auth/register": {
+      "post": {
+        "operationId": "Auth_register",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error. \"code\" is a stable, machine-readable identifier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Auth"],
+        "security": []
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "operationId": "Auth_login",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error. \"code\" is a stable, machine-readable identifier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Auth"],
+        "security": []
+      }
+    },
+    "/auth/refresh": {
+      "post": {
+        "operationId": "Auth_refresh",
+        "parameters": [
+          {
+            "name": "refresh_token",
+            "in": "cookie",
+            "required": false,
+            "description": "httpOnly cookie set by register and login; the browser sends it automatically.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error. \"code\" is a stable, machine-readable identifier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Auth"],
+        "security": []
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "operationId": "Auth_logout",
+        "parameters": [
+          {
+            "name": "refresh_token",
+            "in": "cookie",
+            "required": false,
+            "description": "httpOnly cookie set by register and login; the browser sends it automatically.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No content"
+          },
+          "default": {
+            "description": "Error. \"code\" is a stable, machine-readable identifier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Auth"],
+        "security": []
+      }
+    },
+    "/auth/me": {
+      "get": {
+        "operationId": "Auth_me",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error. \"code\" is a stable, machine-readable identifier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Auth"],
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/companies": {
+      "post": {
+        "operationId": "Companies_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCompanyDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompanyResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error. \"code\" is a stable, machine-readable identifier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Companies"],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "description": "Requires role: RECRUITER."
+      }
+    },
+    "/companies/me": {
+      "get": {
+        "operationId": "Companies_getOwn",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompanyResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error. \"code\" is a stable, machine-readable identifier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Companies"],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "description": "Requires role: RECRUITER."
+      },
+      "patch": {
+        "operationId": "Companies_updateOwn",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCompanyDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompanyResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error. \"code\" is a stable, machine-readable identifier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Companies"],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "description": "Requires role: RECRUITER."
+      }
+    },
+    "/companies/me/logo": {
+      "post": {
+        "operationId": "Companies_uploadLogo",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompanyResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error. \"code\" is a stable, machine-readable identifier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Companies"],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "description": "Requires role: RECRUITER.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": ["file"],
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "PNG, JPEG or WebP image, 2 MB max."
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/companies/{slug}": {
+      "get": {
+        "operationId": "Companies_getBySlug",
+        "parameters": [
+          {
+            "name": "slug",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompanyResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error. \"code\" is a stable, machine-readable identifier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Companies"],
+        "security": []
+      }
+    },
+    "/skills": {
+      "get": {
+        "operationId": "Skills_list",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SkillResponse"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error. \"code\" is a stable, machine-readable identifier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Skills"],
+        "security": []
+      }
+    },
+    "/recruiter/jobs": {
+      "post": {
+        "operationId": "Jobs_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateJobDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JobResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error. \"code\" is a stable, machine-readable identifier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Recruiter jobs"],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "description": "Requires role: RECRUITER."
+      },
+      "get": {
+        "operationId": "Jobs_list",
+        "parameters": [
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": ["DRAFT", "PUBLISHED", "CLOSED", "EXPIRED"]
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 50,
+              "default": 20,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minLength": 1,
+              "maxLength": 64,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JobPageResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error. \"code\" is a stable, machine-readable identifier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Recruiter jobs"],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "description": "Requires role: RECRUITER."
+      }
+    },
+    "/recruiter/jobs/{id}": {
+      "get": {
+        "operationId": "Jobs_get",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JobResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error. \"code\" is a stable, machine-readable identifier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Recruiter jobs"],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "description": "Requires role: RECRUITER."
+      },
+      "patch": {
+        "operationId": "Jobs_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateJobDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JobResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error. \"code\" is a stable, machine-readable identifier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Recruiter jobs"],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "description": "Requires role: RECRUITER."
+      },
+      "delete": {
+        "operationId": "Jobs_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No content"
+          },
+          "default": {
+            "description": "Error. \"code\" is a stable, machine-readable identifier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Recruiter jobs"],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "description": "Requires role: RECRUITER."
+      }
+    },
+    "/recruiter/jobs/{id}/publish": {
+      "post": {
+        "operationId": "Jobs_publish",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JobResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error. \"code\" is a stable, machine-readable identifier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Recruiter jobs"],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "description": "Requires role: RECRUITER."
+      }
+    },
+    "/recruiter/jobs/{id}/close": {
+      "post": {
+        "operationId": "Jobs_close",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JobResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error. \"code\" is a stable, machine-readable identifier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Recruiter jobs"],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "description": "Requires role: RECRUITER."
+      }
+    },
+    "/recruiter/jobs/{id}/renew": {
+      "post": {
+        "operationId": "Jobs_renew",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JobResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error. \"code\" is a stable, machine-readable identifier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Recruiter jobs"],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "description": "Requires role: RECRUITER."
+      }
+    },
+    "/jobs/{id}": {
+      "get": {
+        "operationId": "PublicJobs_get",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicJobResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error. \"code\" is a stable, machine-readable identifier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Jobs"],
+        "security": []
+      }
+    },
+    "/jobs": {
+      "get": {
+        "operationId": "Search_searchJobs",
+        "parameters": [
+          {
+            "name": "q",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "maxLength": 200,
+              "type": "string"
+            }
+          },
+          {
+            "name": "category",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "maxItems": 10,
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "contractType",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "maxItems": 10,
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "remotePolicy",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "maxItems": 10,
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "experienceLevel",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "maxItems": 10,
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "skills",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "maxItems": 10,
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 50
+              }
+            }
+          },
+          {
+            "name": "city",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "maxLength": 100,
+              "type": "string"
+            }
+          },
+          {
+            "name": "region",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "maxLength": 100,
+              "type": "string"
+            }
+          },
+          {
+            "name": "salaryMin",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 0,
+              "maximum": 1000000,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "salaryMax",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 0,
+              "maximum": 1000000,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "postedWithin",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": ["24h", "7d", "14d", "30d"]
+            }
+          },
+          {
+            "name": "sort",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": ["relevance", "date"]
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 50,
+              "default": 20,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "maxLength": 400,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SearchResultResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error. \"code\" is a stable, machine-readable identifier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Jobs"],
+        "security": []
+      }
+    },
+    "/jobs/{jobId}/applications": {
+      "post": {
+        "operationId": "Applications_apply",
+        "parameters": [
+          {
+            "name": "jobId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": ["cv"],
+                "properties": {
+                  "cv": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "PDF file, 5 MB max."
+                  },
+                  "coverLetter": {
+                    "type": "string",
+                    "maxLength": 5000
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error. \"code\" is a stable, machine-readable identifier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Applications"],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "description": "Requires role: CANDIDATE."
+      }
+    },
+    "/applications/me": {
+      "get": {
+        "operationId": "Applications_listMine",
+        "parameters": [
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": ["NEW", "REVIEWED", "INTERVIEW", "REJECTED", "HIRED"]
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 50,
+              "default": 20,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minLength": 1,
+              "maxLength": 64,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CandidateApplicationPageResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error. \"code\" is a stable, machine-readable identifier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Applications"],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "description": "Requires role: CANDIDATE."
+      }
+    },
+    "/recruiter/jobs/{jobId}/applications": {
+      "get": {
+        "operationId": "Applications_listForJob",
+        "parameters": [
+          {
+            "name": "jobId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": ["NEW", "REVIEWED", "INTERVIEW", "REJECTED", "HIRED"]
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 50,
+              "default": 20,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minLength": 1,
+              "maxLength": 64,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecruiterApplicationPageResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error. \"code\" is a stable, machine-readable identifier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Applications"],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "description": "Requires role: RECRUITER."
+      }
+    },
+    "/recruiter/applications/{id}/status": {
+      "patch": {
+        "operationId": "Applications_updateStatus",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateApplicationStatusDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecruiterApplicationResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error. \"code\" is a stable, machine-readable identifier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Applications"],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "description": "Requires role: RECRUITER."
+      }
+    },
+    "/saved-jobs/{jobId}": {
+      "put": {
+        "operationId": "SavedJobs_save",
+        "parameters": [
+          {
+            "name": "jobId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SavedJobResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error. \"code\" is a stable, machine-readable identifier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Saved jobs"],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "description": "Requires role: CANDIDATE."
+      },
+      "delete": {
+        "operationId": "SavedJobs_unsave",
+        "parameters": [
+          {
+            "name": "jobId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No content"
+          },
+          "default": {
+            "description": "Error. \"code\" is a stable, machine-readable identifier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Saved jobs"],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "description": "Requires role: CANDIDATE."
+      }
+    },
+    "/saved-jobs": {
+      "get": {
+        "operationId": "SavedJobs_list",
+        "parameters": [
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 50,
+              "default": 20,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minLength": 1,
+              "maxLength": 64,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SavedJobPageResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error. \"code\" is a stable, machine-readable identifier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Saved jobs"],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "description": "Requires role: CANDIDATE."
+      }
+    },
+    "/saved-searches": {
+      "post": {
+        "operationId": "SavedSearches_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSavedSearchDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SavedSearchResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error. \"code\" is a stable, machine-readable identifier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Saved searches"],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "description": "Requires role: CANDIDATE."
+      },
+      "get": {
+        "operationId": "SavedSearches_list",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SavedSearchResponse"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error. \"code\" is a stable, machine-readable identifier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Saved searches"],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "description": "Requires role: CANDIDATE."
+      }
+    },
+    "/saved-searches/{id}": {
+      "patch": {
+        "operationId": "SavedSearches_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateSavedSearchDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SavedSearchResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error. \"code\" is a stable, machine-readable identifier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Saved searches"],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "description": "Requires role: CANDIDATE."
+      },
+      "delete": {
+        "operationId": "SavedSearches_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No content"
+          },
+          "default": {
+            "description": "Error. \"code\" is a stable, machine-readable identifier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Saved searches"],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "description": "Requires role: CANDIDATE."
+      }
+    },
+    "/admin/jobs": {
+      "get": {
+        "operationId": "Admin_listJobs",
+        "parameters": [
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": ["DRAFT", "PUBLISHED", "CLOSED", "EXPIRED"]
+            }
+          },
+          {
+            "name": "companyId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minLength": 1,
+              "maxLength": 64,
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 50,
+              "default": 20,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minLength": 1,
+              "maxLength": 64,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminJobPageResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error. \"code\" is a stable, machine-readable identifier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Admin"],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "description": "Requires role: ADMIN."
+      }
+    },
+    "/admin/jobs/{id}/close": {
+      "post": {
+        "operationId": "Admin_closeJob",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReasonDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminJobResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error. \"code\" is a stable, machine-readable identifier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Admin"],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "description": "Requires role: ADMIN."
+      }
+    },
+    "/admin/companies": {
+      "get": {
+        "operationId": "Admin_listCompanies",
+        "parameters": [
+          {
+            "name": "hidden",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "q",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minLength": 1,
+              "maxLength": 100,
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 50,
+              "default": 20,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minLength": 1,
+              "maxLength": 64,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminCompanyPageResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error. \"code\" is a stable, machine-readable identifier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Admin"],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "description": "Requires role: ADMIN."
+      }
+    },
+    "/admin/companies/{id}/hide": {
+      "post": {
+        "operationId": "Admin_hideCompany",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReasonDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminCompanyResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error. \"code\" is a stable, machine-readable identifier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Admin"],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "description": "Requires role: ADMIN."
+      }
+    },
+    "/admin/companies/{id}/restore": {
+      "post": {
+        "operationId": "Admin_restoreCompany",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminCompanyResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error. \"code\" is a stable, machine-readable identifier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Admin"],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "description": "Requires role: ADMIN."
+      }
+    },
+    "/admin/skills": {
+      "post": {
+        "operationId": "Admin_createSkill",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSkillDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SkillResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error. \"code\" is a stable, machine-readable identifier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Admin"],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "description": "Requires role: ADMIN."
+      }
+    },
+    "/admin/skills/{id}": {
+      "patch": {
+        "operationId": "Admin_updateSkill",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateSkillDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SkillResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error. \"code\" is a stable, machine-readable identifier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Admin"],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "description": "Requires role: ADMIN."
+      },
+      "delete": {
+        "operationId": "Admin_deleteSkill",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No content"
+          },
+          "default": {
+            "description": "Error. \"code\" is a stable, machine-readable identifier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Admin"],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "description": "Requires role: ADMIN."
+      }
+    },
+    "/health/live": {
+      "get": {
+        "operationId": "Health_live",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthLiveResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error. \"code\" is a stable, machine-readable identifier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Health"],
+        "security": []
+      }
+    },
+    "/health/ready": {
+      "get": {
+        "operationId": "Health_ready",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthReadyResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error. \"code\" is a stable, machine-readable identifier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Health"],
+        "security": []
+      }
+    }
+  },
+  "info": {
+    "title": "DevHire API",
+    "description": "REST API of DevHire, a job board for web development jobs. Paths are relative to the /api/v1 server.",
+    "version": "1.0.0",
+    "contact": {}
+  },
+  "tags": [
+    {
+      "name": "Auth"
+    },
+    {
+      "name": "Companies"
+    },
+    {
+      "name": "Skills"
+    },
+    {
+      "name": "Recruiter jobs"
+    },
+    {
+      "name": "Jobs"
+    },
+    {
+      "name": "Applications"
+    },
+    {
+      "name": "Saved jobs"
+    },
+    {
+      "name": "Saved searches"
+    },
+    {
+      "name": "Admin"
+    },
+    {
+      "name": "Health"
+    }
+  ],
+  "servers": [
+    {
+      "url": "/api/v1"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearer": {
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "type": "http"
+      }
+    },
+    "schemas": {
+      "RegisterDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string",
+            "minLength": 8,
+            "maxLength": 72
+          },
+          "firstName": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "lastName": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "role": {
+            "type": "string",
+            "enum": ["CANDIDATE", "RECRUITER"]
+          }
+        },
+        "required": ["email", "password", "firstName", "lastName", "role"]
+      },
+      "LoginDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 72
+          }
+        },
+        "required": ["email", "password"]
+      },
+      "CreateCompanyDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 100
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 5000
+          },
+          "website": {
+            "type": "string",
+            "maxLength": 255
+          },
+          "city": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          }
+        },
+        "required": ["name"]
+      },
+      "UpdateCompanyDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 100
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 5000,
+            "nullable": true
+          },
+          "website": {
+            "type": "string",
+            "maxLength": 255,
+            "nullable": true
+          },
+          "city": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100,
+            "nullable": true
+          }
+        }
+      },
+      "CreateJobDto": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 150
+          },
+          "description": {
+            "type": "string",
+            "minLength": 20,
+            "maxLength": 20000
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "FRONTEND",
+              "BACKEND",
+              "FULLSTACK",
+              "DEVOPS",
+              "QA",
+              "MOBILE"
+            ]
+          },
+          "contractType": {
+            "type": "string",
+            "enum": ["CDI", "CDD", "STAGE", "ALTERNANCE", "FREELANCE"]
+          },
+          "remotePolicy": {
+            "type": "string",
+            "enum": ["FULL_REMOTE", "HYBRID", "ON_SITE"]
+          },
+          "experienceLevel": {
+            "type": "string",
+            "enum": ["JUNIOR", "MID", "SENIOR"]
+          },
+          "city": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "region": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "salaryMin": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000000
+          },
+          "salaryMax": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000000
+          },
+          "skills": {
+            "default": [],
+            "maxItems": 15,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 50
+            }
+          }
+        },
+        "required": [
+          "title",
+          "description",
+          "category",
+          "contractType",
+          "remotePolicy",
+          "experienceLevel"
+        ]
+      },
+      "UpdateJobDto": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 150
+          },
+          "description": {
+            "type": "string",
+            "minLength": 20,
+            "maxLength": 20000
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "FRONTEND",
+              "BACKEND",
+              "FULLSTACK",
+              "DEVOPS",
+              "QA",
+              "MOBILE"
+            ]
+          },
+          "contractType": {
+            "type": "string",
+            "enum": ["CDI", "CDD", "STAGE", "ALTERNANCE", "FREELANCE"]
+          },
+          "remotePolicy": {
+            "type": "string",
+            "enum": ["FULL_REMOTE", "HYBRID", "ON_SITE"]
+          },
+          "experienceLevel": {
+            "type": "string",
+            "enum": ["JUNIOR", "MID", "SENIOR"]
+          },
+          "city": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100,
+            "nullable": true
+          },
+          "region": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100,
+            "nullable": true
+          },
+          "salaryMin": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000000,
+            "nullable": true
+          },
+          "salaryMax": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000000,
+            "nullable": true
+          },
+          "skills": {
+            "maxItems": 15,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 50
+            }
+          }
+        }
+      },
+      "ApplyDto": {
+        "type": "object",
+        "properties": {
+          "coverLetter": {
+            "type": "string",
+            "maxLength": 5000
+          }
+        }
+      },
+      "UpdateApplicationStatusDto": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": ["NEW", "REVIEWED", "INTERVIEW", "REJECTED", "HIRED"]
+          }
+        },
+        "required": ["status"]
+      },
+      "CreateSavedSearchDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "filters": {
+            "type": "object",
+            "properties": {
+              "q": {
+                "type": "string",
+                "maxLength": 200
+              },
+              "category": {
+                "maxItems": 10,
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "contractType": {
+                "maxItems": 10,
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "remotePolicy": {
+                "maxItems": 10,
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "experienceLevel": {
+                "maxItems": 10,
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "skills": {
+                "maxItems": 10,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 50
+                }
+              },
+              "city": {
+                "type": "string",
+                "maxLength": 100
+              },
+              "region": {
+                "type": "string",
+                "maxLength": 100
+              },
+              "salaryMin": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 1000000
+              },
+              "salaryMax": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 1000000
+              },
+              "postedWithin": {
+                "type": "string",
+                "enum": ["24h", "7d", "14d", "30d"]
+              }
+            }
+          },
+          "frequency": {
+            "default": "DAILY",
+            "type": "string",
+            "enum": ["INSTANT", "DAILY"]
+          },
+          "alertsEnabled": {
+            "default": true,
+            "type": "boolean"
+          }
+        },
+        "required": ["name", "filters"]
+      },
+      "UpdateSavedSearchDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "filters": {
+            "type": "object",
+            "properties": {
+              "q": {
+                "type": "string",
+                "maxLength": 200
+              },
+              "category": {
+                "maxItems": 10,
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "contractType": {
+                "maxItems": 10,
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "remotePolicy": {
+                "maxItems": 10,
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "experienceLevel": {
+                "maxItems": 10,
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "skills": {
+                "maxItems": 10,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 50
+                }
+              },
+              "city": {
+                "type": "string",
+                "maxLength": 100
+              },
+              "region": {
+                "type": "string",
+                "maxLength": 100
+              },
+              "salaryMin": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 1000000
+              },
+              "salaryMax": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 1000000
+              },
+              "postedWithin": {
+                "type": "string",
+                "enum": ["24h", "7d", "14d", "30d"]
+              }
+            }
+          },
+          "frequency": {
+            "type": "string",
+            "enum": ["INSTANT", "DAILY"]
+          },
+          "alertsEnabled": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ReasonDto": {
+        "type": "object",
+        "properties": {
+          "reason": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 500
+          }
+        },
+        "required": ["reason"]
+      },
+      "CreateSkillDto": {
+        "type": "object",
+        "properties": {
+          "slug": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 50,
+            "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 60
+          },
+          "aliases": {
+            "default": [],
+            "maxItems": 20,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 50
+            }
+          }
+        },
+        "required": ["slug", "name"]
+      },
+      "UpdateSkillDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 60
+          },
+          "aliases": {
+            "maxItems": 20,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 50
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "statusCode": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "details": {},
+          "requestId": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": ["statusCode", "code", "message", "path"]
+      },
+      "UserResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string",
+            "enum": ["CANDIDATE", "RECRUITER", "ADMIN"]
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+          }
+        },
+        "required": [
+          "id",
+          "email",
+          "firstName",
+          "lastName",
+          "role",
+          "createdAt"
+        ],
+        "additionalProperties": false
+      },
+      "AuthResponse": {
+        "type": "object",
+        "properties": {
+          "accessToken": {
+            "type": "string"
+          },
+          "user": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "email": {
+                "type": "string"
+              },
+              "firstName": {
+                "type": "string"
+              },
+              "lastName": {
+                "type": "string"
+              },
+              "role": {
+                "type": "string",
+                "enum": ["CANDIDATE", "RECRUITER", "ADMIN"]
+              },
+              "createdAt": {
+                "type": "string",
+                "format": "date-time",
+                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+              }
+            },
+            "required": [
+              "id",
+              "email",
+              "firstName",
+              "lastName",
+              "role",
+              "createdAt"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": ["accessToken", "user"],
+        "additionalProperties": false
+      },
+      "CompanyResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "website": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "city": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "logoUrl": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "isHidden": {
+            "type": "boolean"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+          }
+        },
+        "required": [
+          "id",
+          "slug",
+          "name",
+          "description",
+          "website",
+          "city",
+          "logoUrl",
+          "isHidden",
+          "createdAt",
+          "updatedAt"
+        ],
+        "additionalProperties": false
+      },
+      "SkillResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "aliases": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": ["id", "slug", "name", "aliases"],
+        "additionalProperties": false
+      },
+      "JobResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "companyId": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "FRONTEND",
+              "BACKEND",
+              "FULLSTACK",
+              "DEVOPS",
+              "QA",
+              "MOBILE"
+            ]
+          },
+          "contractType": {
+            "type": "string",
+            "enum": ["CDI", "CDD", "STAGE", "ALTERNANCE", "FREELANCE"]
+          },
+          "remotePolicy": {
+            "type": "string",
+            "enum": ["FULL_REMOTE", "HYBRID", "ON_SITE"]
+          },
+          "experienceLevel": {
+            "type": "string",
+            "enum": ["JUNIOR", "MID", "SENIOR"]
+          },
+          "city": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "region": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "salaryMin": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991,
+            "nullable": true
+          },
+          "salaryMax": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991,
+            "nullable": true
+          },
+          "status": {
+            "type": "string",
+            "enum": ["DRAFT", "PUBLISHED", "CLOSED", "EXPIRED"]
+          },
+          "publishedAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+            "nullable": true
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+            "nullable": true
+          },
+          "closedAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+            "nullable": true
+          },
+          "moderatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+            "nullable": true
+          },
+          "moderationReason": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "postedDaysAgo": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991,
+            "nullable": true
+          },
+          "skills": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "slug": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                }
+              },
+              "required": ["slug", "name"],
+              "additionalProperties": false
+            }
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+          }
+        },
+        "required": [
+          "id",
+          "companyId",
+          "title",
+          "description",
+          "category",
+          "contractType",
+          "remotePolicy",
+          "experienceLevel",
+          "city",
+          "region",
+          "salaryMin",
+          "salaryMax",
+          "status",
+          "publishedAt",
+          "expiresAt",
+          "closedAt",
+          "moderatedAt",
+          "moderationReason",
+          "postedDaysAgo",
+          "skills",
+          "createdAt",
+          "updatedAt"
+        ],
+        "additionalProperties": false
+      },
+      "JobPageResponse": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "companyId": {
+                  "type": "string"
+                },
+                "title": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "category": {
+                  "type": "string",
+                  "enum": [
+                    "FRONTEND",
+                    "BACKEND",
+                    "FULLSTACK",
+                    "DEVOPS",
+                    "QA",
+                    "MOBILE"
+                  ]
+                },
+                "contractType": {
+                  "type": "string",
+                  "enum": ["CDI", "CDD", "STAGE", "ALTERNANCE", "FREELANCE"]
+                },
+                "remotePolicy": {
+                  "type": "string",
+                  "enum": ["FULL_REMOTE", "HYBRID", "ON_SITE"]
+                },
+                "experienceLevel": {
+                  "type": "string",
+                  "enum": ["JUNIOR", "MID", "SENIOR"]
+                },
+                "city": {
+                  "type": ["string", "null"]
+                },
+                "region": {
+                  "type": ["string", "null"]
+                },
+                "salaryMin": {
+                  "type": "integer",
+                  "minimum": -9007199254740991,
+                  "maximum": 9007199254740991,
+                  "nullable": true
+                },
+                "salaryMax": {
+                  "type": "integer",
+                  "minimum": -9007199254740991,
+                  "maximum": 9007199254740991,
+                  "nullable": true
+                },
+                "status": {
+                  "type": "string",
+                  "enum": ["DRAFT", "PUBLISHED", "CLOSED", "EXPIRED"]
+                },
+                "publishedAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                  "nullable": true
+                },
+                "expiresAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                  "nullable": true
+                },
+                "closedAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                  "nullable": true
+                },
+                "moderatedAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                  "nullable": true
+                },
+                "moderationReason": {
+                  "type": ["string", "null"]
+                },
+                "postedDaysAgo": {
+                  "type": "integer",
+                  "minimum": -9007199254740991,
+                  "maximum": 9007199254740991,
+                  "nullable": true
+                },
+                "skills": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "slug": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      }
+                    },
+                    "required": ["slug", "name"],
+                    "additionalProperties": false
+                  }
+                },
+                "createdAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                },
+                "updatedAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                }
+              },
+              "required": [
+                "id",
+                "companyId",
+                "title",
+                "description",
+                "category",
+                "contractType",
+                "remotePolicy",
+                "experienceLevel",
+                "city",
+                "region",
+                "salaryMin",
+                "salaryMax",
+                "status",
+                "publishedAt",
+                "expiresAt",
+                "closedAt",
+                "moderatedAt",
+                "moderationReason",
+                "postedDaysAgo",
+                "skills",
+                "createdAt",
+                "updatedAt"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "nextCursor": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": ["items", "nextCursor"],
+        "additionalProperties": false
+      },
+      "PublicJobResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "FRONTEND",
+              "BACKEND",
+              "FULLSTACK",
+              "DEVOPS",
+              "QA",
+              "MOBILE"
+            ]
+          },
+          "contractType": {
+            "type": "string",
+            "enum": ["CDI", "CDD", "STAGE", "ALTERNANCE", "FREELANCE"]
+          },
+          "remotePolicy": {
+            "type": "string",
+            "enum": ["FULL_REMOTE", "HYBRID", "ON_SITE"]
+          },
+          "experienceLevel": {
+            "type": "string",
+            "enum": ["JUNIOR", "MID", "SENIOR"]
+          },
+          "city": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "region": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "salaryMin": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991,
+            "nullable": true
+          },
+          "salaryMax": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991,
+            "nullable": true
+          },
+          "status": {
+            "type": "string",
+            "enum": ["DRAFT", "PUBLISHED", "CLOSED", "EXPIRED"]
+          },
+          "isOpen": {
+            "type": "boolean"
+          },
+          "publishedAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+            "nullable": true
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+            "nullable": true
+          },
+          "closedAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+            "nullable": true
+          },
+          "postedDaysAgo": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991,
+            "nullable": true
+          },
+          "skills": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "slug": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                }
+              },
+              "required": ["slug", "name"],
+              "additionalProperties": false
+            }
+          },
+          "company": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "slug": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "logoUrl": {
+                "type": ["string", "null"]
+              },
+              "city": {
+                "type": ["string", "null"]
+              }
+            },
+            "required": ["id", "slug", "name", "logoUrl", "city"],
+            "additionalProperties": false
+          },
+          "description": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "category",
+          "contractType",
+          "remotePolicy",
+          "experienceLevel",
+          "city",
+          "region",
+          "salaryMin",
+          "salaryMax",
+          "status",
+          "isOpen",
+          "publishedAt",
+          "expiresAt",
+          "closedAt",
+          "postedDaysAgo",
+          "skills",
+          "company",
+          "description"
+        ],
+        "additionalProperties": false
+      },
+      "SearchResultResponse": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "title": {
+                  "type": "string"
+                },
+                "category": {
+                  "type": "string",
+                  "enum": [
+                    "FRONTEND",
+                    "BACKEND",
+                    "FULLSTACK",
+                    "DEVOPS",
+                    "QA",
+                    "MOBILE"
+                  ]
+                },
+                "contractType": {
+                  "type": "string",
+                  "enum": ["CDI", "CDD", "STAGE", "ALTERNANCE", "FREELANCE"]
+                },
+                "remotePolicy": {
+                  "type": "string",
+                  "enum": ["FULL_REMOTE", "HYBRID", "ON_SITE"]
+                },
+                "experienceLevel": {
+                  "type": "string",
+                  "enum": ["JUNIOR", "MID", "SENIOR"]
+                },
+                "city": {
+                  "type": ["string", "null"]
+                },
+                "region": {
+                  "type": ["string", "null"]
+                },
+                "salaryMin": {
+                  "type": "integer",
+                  "minimum": -9007199254740991,
+                  "maximum": 9007199254740991,
+                  "nullable": true
+                },
+                "salaryMax": {
+                  "type": "integer",
+                  "minimum": -9007199254740991,
+                  "maximum": 9007199254740991,
+                  "nullable": true
+                },
+                "status": {
+                  "type": "string",
+                  "enum": ["DRAFT", "PUBLISHED", "CLOSED", "EXPIRED"]
+                },
+                "isOpen": {
+                  "type": "boolean"
+                },
+                "publishedAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                  "nullable": true
+                },
+                "expiresAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                  "nullable": true
+                },
+                "closedAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                  "nullable": true
+                },
+                "postedDaysAgo": {
+                  "type": "integer",
+                  "minimum": -9007199254740991,
+                  "maximum": 9007199254740991,
+                  "nullable": true
+                },
+                "skills": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "slug": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      }
+                    },
+                    "required": ["slug", "name"],
+                    "additionalProperties": false
+                  }
+                },
+                "company": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "slug": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "logoUrl": {
+                      "type": ["string", "null"]
+                    },
+                    "city": {
+                      "type": ["string", "null"]
+                    }
+                  },
+                  "required": ["id", "slug", "name", "logoUrl", "city"],
+                  "additionalProperties": false
+                },
+                "excerpt": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "title",
+                "category",
+                "contractType",
+                "remotePolicy",
+                "experienceLevel",
+                "city",
+                "region",
+                "salaryMin",
+                "salaryMax",
+                "status",
+                "isOpen",
+                "publishedAt",
+                "expiresAt",
+                "closedAt",
+                "postedDaysAgo",
+                "skills",
+                "company",
+                "excerpt"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "nextCursor": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "total": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991,
+            "nullable": true
+          },
+          "facets": {
+            "type": "object",
+            "properties": {
+              "category": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "value": {
+                      "type": "string"
+                    },
+                    "count": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": ["value", "count"],
+                  "additionalProperties": false
+                }
+              },
+              "contractType": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "value": {
+                      "type": "string"
+                    },
+                    "count": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": ["value", "count"],
+                  "additionalProperties": false
+                }
+              },
+              "remotePolicy": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "value": {
+                      "type": "string"
+                    },
+                    "count": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": ["value", "count"],
+                  "additionalProperties": false
+                }
+              },
+              "experienceLevel": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "value": {
+                      "type": "string"
+                    },
+                    "count": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": ["value", "count"],
+                  "additionalProperties": false
+                }
+              },
+              "skills": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "value": {
+                      "type": "string"
+                    },
+                    "label": {
+                      "type": "string"
+                    },
+                    "count": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": ["value", "label", "count"],
+                  "additionalProperties": false
+                }
+              },
+              "cities": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "value": {
+                      "type": "string"
+                    },
+                    "count": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": ["value", "count"],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "required": [
+              "category",
+              "contractType",
+              "remotePolicy",
+              "experienceLevel",
+              "skills",
+              "cities"
+            ],
+            "additionalProperties": false,
+            "nullable": true
+          }
+        },
+        "required": ["items", "nextCursor", "total", "facets"],
+        "additionalProperties": false
+      },
+      "ApplicationResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "jobId": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["NEW", "REVIEWED", "INTERVIEW", "REJECTED", "HIRED"]
+          },
+          "coverLetter": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "cvUrl": {
+            "type": "string"
+          },
+          "cvSize": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+          }
+        },
+        "required": [
+          "id",
+          "jobId",
+          "status",
+          "coverLetter",
+          "cvUrl",
+          "cvSize",
+          "createdAt",
+          "updatedAt"
+        ],
+        "additionalProperties": false
+      },
+      "CandidateApplicationPageResponse": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "jobId": {
+                  "type": "string"
+                },
+                "status": {
+                  "type": "string",
+                  "enum": ["NEW", "REVIEWED", "INTERVIEW", "REJECTED", "HIRED"]
+                },
+                "coverLetter": {
+                  "type": ["string", "null"]
+                },
+                "cvUrl": {
+                  "type": "string"
+                },
+                "cvSize": {
+                  "type": "integer",
+                  "minimum": -9007199254740991,
+                  "maximum": 9007199254740991
+                },
+                "createdAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                },
+                "updatedAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                },
+                "job": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "title": {
+                      "type": "string"
+                    },
+                    "city": {
+                      "type": ["string", "null"]
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": ["DRAFT", "PUBLISHED", "CLOSED", "EXPIRED"]
+                    },
+                    "isOpen": {
+                      "type": "boolean"
+                    },
+                    "company": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "slug": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "logoUrl": {
+                          "type": ["string", "null"]
+                        }
+                      },
+                      "required": ["id", "slug", "name", "logoUrl"],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "title",
+                    "city",
+                    "status",
+                    "isOpen",
+                    "company"
+                  ],
+                  "additionalProperties": false,
+                  "nullable": true
+                }
+              },
+              "required": [
+                "id",
+                "jobId",
+                "status",
+                "coverLetter",
+                "cvUrl",
+                "cvSize",
+                "createdAt",
+                "updatedAt",
+                "job"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "nextCursor": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": ["items", "nextCursor"],
+        "additionalProperties": false
+      },
+      "RecruiterApplicationResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "jobId": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["NEW", "REVIEWED", "INTERVIEW", "REJECTED", "HIRED"]
+          },
+          "coverLetter": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "cvUrl": {
+            "type": "string"
+          },
+          "cvSize": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+          },
+          "candidate": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "firstName": {
+                "type": "string"
+              },
+              "lastName": {
+                "type": "string"
+              },
+              "email": {
+                "type": "string"
+              }
+            },
+            "required": ["id", "firstName", "lastName", "email"],
+            "additionalProperties": false,
+            "nullable": true
+          }
+        },
+        "required": [
+          "id",
+          "jobId",
+          "status",
+          "coverLetter",
+          "cvUrl",
+          "cvSize",
+          "createdAt",
+          "updatedAt",
+          "candidate"
+        ],
+        "additionalProperties": false
+      },
+      "RecruiterApplicationPageResponse": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "jobId": {
+                  "type": "string"
+                },
+                "status": {
+                  "type": "string",
+                  "enum": ["NEW", "REVIEWED", "INTERVIEW", "REJECTED", "HIRED"]
+                },
+                "coverLetter": {
+                  "type": ["string", "null"]
+                },
+                "cvUrl": {
+                  "type": "string"
+                },
+                "cvSize": {
+                  "type": "integer",
+                  "minimum": -9007199254740991,
+                  "maximum": 9007199254740991
+                },
+                "createdAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                },
+                "updatedAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                },
+                "candidate": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "firstName": {
+                      "type": "string"
+                    },
+                    "lastName": {
+                      "type": "string"
+                    },
+                    "email": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["id", "firstName", "lastName", "email"],
+                  "additionalProperties": false,
+                  "nullable": true
+                }
+              },
+              "required": [
+                "id",
+                "jobId",
+                "status",
+                "coverLetter",
+                "cvUrl",
+                "cvSize",
+                "createdAt",
+                "updatedAt",
+                "candidate"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "nextCursor": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": ["items", "nextCursor"],
+        "additionalProperties": false
+      },
+      "SavedJobResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "jobId": {
+            "type": "string"
+          },
+          "savedAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+          }
+        },
+        "required": ["id", "jobId", "savedAt"],
+        "additionalProperties": false
+      },
+      "SavedJobPageResponse": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "jobId": {
+                  "type": "string"
+                },
+                "savedAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                },
+                "job": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "title": {
+                      "type": "string"
+                    },
+                    "city": {
+                      "type": ["string", "null"]
+                    },
+                    "contractType": {
+                      "type": "string",
+                      "enum": ["CDI", "CDD", "STAGE", "ALTERNANCE", "FREELANCE"]
+                    },
+                    "remotePolicy": {
+                      "type": "string",
+                      "enum": ["FULL_REMOTE", "HYBRID", "ON_SITE"]
+                    },
+                    "experienceLevel": {
+                      "type": "string",
+                      "enum": ["JUNIOR", "MID", "SENIOR"]
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": ["DRAFT", "PUBLISHED", "CLOSED", "EXPIRED"]
+                    },
+                    "isOpen": {
+                      "type": "boolean"
+                    },
+                    "publishedAt": {
+                      "type": "string",
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                      "nullable": true
+                    },
+                    "expiresAt": {
+                      "type": "string",
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                      "nullable": true
+                    },
+                    "closedAt": {
+                      "type": "string",
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                      "nullable": true
+                    },
+                    "postedDaysAgo": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991,
+                      "nullable": true
+                    },
+                    "company": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "slug": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "logoUrl": {
+                          "type": ["string", "null"]
+                        }
+                      },
+                      "required": ["id", "slug", "name", "logoUrl"],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "title",
+                    "city",
+                    "contractType",
+                    "remotePolicy",
+                    "experienceLevel",
+                    "status",
+                    "isOpen",
+                    "publishedAt",
+                    "expiresAt",
+                    "closedAt",
+                    "postedDaysAgo",
+                    "company"
+                  ],
+                  "additionalProperties": false,
+                  "nullable": true
+                }
+              },
+              "required": ["id", "jobId", "savedAt", "job"],
+              "additionalProperties": false
+            }
+          },
+          "nextCursor": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": ["items", "nextCursor"],
+        "additionalProperties": false
+      },
+      "SavedSearchResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "filters": {
+            "type": "object",
+            "additionalProperties": {}
+          },
+          "frequency": {
+            "type": "string",
+            "enum": ["INSTANT", "DAILY"]
+          },
+          "alertsEnabled": {
+            "type": "boolean"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "filters",
+          "frequency",
+          "alertsEnabled",
+          "createdAt",
+          "updatedAt"
+        ],
+        "additionalProperties": false
+      },
+      "AdminJobResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["DRAFT", "PUBLISHED", "CLOSED", "EXPIRED"]
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "FRONTEND",
+              "BACKEND",
+              "FULLSTACK",
+              "DEVOPS",
+              "QA",
+              "MOBILE"
+            ]
+          },
+          "city": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "publishedAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+            "nullable": true
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+            "nullable": true
+          },
+          "closedAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+            "nullable": true
+          },
+          "moderatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+            "nullable": true
+          },
+          "moderationReason": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "company": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "slug": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "isHidden": {
+                "type": "boolean"
+              }
+            },
+            "required": ["id", "slug", "name", "isHidden"],
+            "additionalProperties": false,
+            "nullable": true
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "status",
+          "category",
+          "city",
+          "publishedAt",
+          "expiresAt",
+          "closedAt",
+          "moderatedAt",
+          "moderationReason",
+          "company"
+        ],
+        "additionalProperties": false
+      },
+      "AdminJobPageResponse": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "title": {
+                  "type": "string"
+                },
+                "status": {
+                  "type": "string",
+                  "enum": ["DRAFT", "PUBLISHED", "CLOSED", "EXPIRED"]
+                },
+                "category": {
+                  "type": "string",
+                  "enum": [
+                    "FRONTEND",
+                    "BACKEND",
+                    "FULLSTACK",
+                    "DEVOPS",
+                    "QA",
+                    "MOBILE"
+                  ]
+                },
+                "city": {
+                  "type": ["string", "null"]
+                },
+                "publishedAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                  "nullable": true
+                },
+                "expiresAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                  "nullable": true
+                },
+                "closedAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                  "nullable": true
+                },
+                "moderatedAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                  "nullable": true
+                },
+                "moderationReason": {
+                  "type": ["string", "null"]
+                },
+                "company": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "slug": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "isHidden": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": ["id", "slug", "name", "isHidden"],
+                  "additionalProperties": false,
+                  "nullable": true
+                }
+              },
+              "required": [
+                "id",
+                "title",
+                "status",
+                "category",
+                "city",
+                "publishedAt",
+                "expiresAt",
+                "closedAt",
+                "moderatedAt",
+                "moderationReason",
+                "company"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "nextCursor": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": ["items", "nextCursor"],
+        "additionalProperties": false
+      },
+      "AdminCompanyResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "website": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "city": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "logoUrl": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "isHidden": {
+            "type": "boolean"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+          },
+          "ownerId": {
+            "type": "string"
+          },
+          "hiddenAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+            "nullable": true
+          },
+          "hiddenReason": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "slug",
+          "name",
+          "description",
+          "website",
+          "city",
+          "logoUrl",
+          "isHidden",
+          "createdAt",
+          "updatedAt",
+          "ownerId",
+          "hiddenAt",
+          "hiddenReason"
+        ],
+        "additionalProperties": false
+      },
+      "AdminCompanyPageResponse": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "slug": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": ["string", "null"]
+                },
+                "website": {
+                  "type": ["string", "null"]
+                },
+                "city": {
+                  "type": ["string", "null"]
+                },
+                "logoUrl": {
+                  "type": ["string", "null"]
+                },
+                "isHidden": {
+                  "type": "boolean"
+                },
+                "createdAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                },
+                "updatedAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                },
+                "ownerId": {
+                  "type": "string"
+                },
+                "hiddenAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                  "nullable": true
+                },
+                "hiddenReason": {
+                  "type": ["string", "null"]
+                }
+              },
+              "required": [
+                "id",
+                "slug",
+                "name",
+                "description",
+                "website",
+                "city",
+                "logoUrl",
+                "isHidden",
+                "createdAt",
+                "updatedAt",
+                "ownerId",
+                "hiddenAt",
+                "hiddenReason"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "nextCursor": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": ["items", "nextCursor"],
+        "additionalProperties": false
+      },
+      "HealthLiveResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": ["ok"]
+          }
+        },
+        "required": ["status"],
+        "additionalProperties": false
+      },
+      "HealthReadyResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": ["ok"]
+          },
+          "checks": {
+            "type": "object",
+            "properties": {
+              "database": {
+                "type": "string",
+                "enum": ["up"]
+              },
+              "redis": {
+                "type": "string",
+                "enum": ["up"]
+              }
+            },
+            "required": ["database", "redis"],
+            "additionalProperties": false
+          }
+        },
+        "required": ["status", "checks"],
+        "additionalProperties": false
+      }
+    }
+  }
+}

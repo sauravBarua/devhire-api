@@ -108,7 +108,7 @@ export class AuthController {
   } {
     return {
       httpOnly: true,
-      secure: this.env.NODE_ENV === 'production',
+      secure: this.env.COOKIE_SECURE ?? this.env.NODE_ENV === 'production',
       sameSite: 'lax',
       path: REFRESH_COOKIE_PATH,
     };

@@ -31,5 +31,66 @@ services:
       - '1025:1025'
       - '8025:8025'
 
+  # the API in a container: docker compose --profile app up -d --build
+  api:
+    profiles: ['app']
+    build:
+      context: .
+      target: runtime
+    image: devhire-api:local
+    init: true
+    stop_grace_period: 20s
+    env_file:
+      - .env
+    environment:
+      NODE_ENV: production
+      PORT: '3000'
+      DATABASE_URL: postgresql://devhire:devhire@postgres:5432/devhire?schema=public
+      REDIS_URL: redis://redis:6379
+      # mail always goes to MailHog here, whatever SMTP settings your .env has
+      SMTP_HOST: mailhog
+      SMTP_PORT: '1025'
+      SMTP_SECURE: 'false'
+      SMTP_USER: ''
+      SMTP_PASS: ''
+      # plain http on localhost: a Secure cookie would never be sent back
+      COOKIE_SECURE: 'false'
+      DOCS_ENABLED: 'true'
+    ports:
+      - '3000:3000'
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      mailhog:
+        condition: service_started
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - "fetch('http://127.0.0.1:3000/api/v1/health/ready').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+
+  # one-off commands: migrations (default) and seed
+  #   docker compose --profile tools run --rm tools
+  #   docker compose --profile tools run --rm tools pnpm db:seed
+  tools:
+    profiles: ['tools']
+    build:
+      context: .
+      target: tools
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgresql://devhire:devhire@postgres:5432/devhire?schema=public
+    depends_on:
+      postgres:
+        condition: service_healthy
+
 volumes:
   pgdata:

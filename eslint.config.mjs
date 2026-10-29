@@ -11,6 +11,7 @@ export default tseslint.config(
       'node_modules',
       'src/generated',
       '*.config.mjs',
+      '.husky',
     ],
   },
   eslint.configs.recommended,

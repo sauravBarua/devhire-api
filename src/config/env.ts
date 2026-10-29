@@ -62,6 +62,9 @@ export const envSchema = z.object({
   SENTRY_DSN: z.preprocess(blankToUndefined, z.url().optional()),
   SHUTDOWN_TIMEOUT_MS: z.coerce.number().int().min(1000).default(15000),
   SHUTDOWN_DRAIN_MS: z.coerce.number().int().min(0).max(60000).default(0),
+  // unset = Secure refresh cookie and no public docs in production, relaxed everywhere else
+  COOKIE_SECURE: z.preprocess(blankToUndefined, z.stringbool().optional()),
+  DOCS_ENABLED: z.preprocess(blankToUndefined, z.stringbool().optional()),
 });
 
 export type Env = z.infer<typeof envSchema>;
