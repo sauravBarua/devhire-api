@@ -242,6 +242,8 @@ export class SearchService {
     const conditions: Prisma.Sql[] = [
       Prisma.sql`j."status" = 'PUBLISHED'`,
       Prisma.sql`j."expiresAt" > ${UTC_NOW}`,
+      // jobs of a company hidden by a moderator never appear, in results, totals, facets or alerts
+      Prisma.sql`NOT EXISTS (SELECT 1 FROM "Company" hc WHERE hc."id" = j."companyId" AND hc."hiddenAt" IS NOT NULL)`,
     ];
 
     // websearch_to_tsquery ANDs the terms, so every term must match

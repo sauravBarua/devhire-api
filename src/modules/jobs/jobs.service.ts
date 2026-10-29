@@ -10,7 +10,10 @@ import { ENV, type Env } from '../../config/env';
 import type { Prisma } from '../../generated/prisma/client';
 import { JobStatus } from '../../generated/prisma/enums';
 import { PrismaService } from '../../infra/prisma/prisma.service';
-import { CompaniesService } from '../companies/companies.service';
+import {
+  CompaniesService,
+  type CompanyView,
+} from '../companies/companies.service';
 import { SkillsService } from '../skills/skills.service';
 import type {
   CreateJobDto,
@@ -181,8 +184,26 @@ export class JobsService {
     jobId: string,
     action: JobAction,
   ): Promise<JobView> {
-    const companyId = await this.requireCompanyId(userId);
-    const job = await this.requireOwnedJob(companyId, jobId);
+    const company = await this.requireCompany(userId);
+    const job = await this.requireOwnedJob(company.id, jobId);
+
+    // a hidden company must not put jobs back online
+    if ((action === 'publish' || action === 'renew') && company.isHidden) {
+      throw new AppException(
+        HttpStatus.FORBIDDEN,
+        'COMPANY_HIDDEN',
+        'Your company is hidden by a moderator; jobs cannot be published or renewed',
+      );
+    }
+    // a job closed by a moderator stays closed
+    if (action === 'renew' && job.moderatedAt !== null) {
+      throw new AppException(
+        HttpStatus.CONFLICT,
+        'JOB_MODERATED',
+        'This job was closed by a moderator and cannot be renewed',
+      );
+    }
+
     const now = new Date();
     const next = applyTransition(
       job,
@@ -208,15 +229,15 @@ export class JobsService {
 
     const payload: JobEventPayload = {
       jobId: job.id,
-      companyId,
+      companyId: company.id,
       occurredAt: now,
     };
     this.events.emit(EVENT_BY_ACTION[action], payload);
 
-    return this.viewOne(await this.requireOwnedJob(companyId, jobId));
+    return this.viewOne(await this.requireOwnedJob(company.id, jobId));
   }
 
-  private async requireCompanyId(userId: string): Promise<string> {
+  private async requireCompany(userId: string): Promise<CompanyView> {
     const company = await this.companies.findByOwnerId(userId);
     if (!company) {
       throw new AppException(
@@ -225,7 +246,11 @@ export class JobsService {
         'Create your company profile before managing jobs',
       );
     }
-    return company.id;
+    return company;
+  }
+
+  private async requireCompanyId(userId: string): Promise<string> {
+    return (await this.requireCompany(userId)).id;
   }
 
   // a job of another company is reported as not found, so its existence is not revealed

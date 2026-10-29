@@ -25,6 +25,8 @@
     { "key": "searchCursor", "value": "" },
     { "key": "applicationId", "value": "" },
     { "key": "savedSearchId", "value": "" },
+    { "key": "skillId", "value": "" },
+    { "key": "skillSlug", "value": "" },
     { "key": "candidateEmail", "value": "candidatea@devhire.test" },
     { "key": "recruiterEmail", "value": "recruitera@devhire.test" },
     { "key": "adminEmail", "value": "admin@devhire.test" },
@@ -1988,6 +1990,622 @@
                 "exec": [
                   "pm.test('404 Not Found', () => pm.response.to.have.status(404));",
                   "pm.test('error code', () => pm.expect(pm.response.json().code).to.eql('SAVED_SEARCH_NOT_FOUND'));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Admin",
+      "item": [
+        {
+          "name": "Admin: list jobs",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminAccessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/admin/jobs?limit=20",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "jobs"],
+              "query": [{ "key": "limit", "value": "20" }]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('200 OK', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test('has items and nextCursor', () => { pm.expect(json.items).to.be.an('array'); pm.expect(json).to.have.property('nextCursor'); });",
+                  "pm.test('no drafts by default', () => json.items.forEach((j) => pm.expect(j.status).to.not.eql('DRAFT')));",
+                  "pm.test('each job carries its company', () => json.items.forEach((j) => pm.expect(j.company.name).to.be.a('string')));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Admin: force-close without reason (400)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminAccessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{}" },
+            "url": {
+              "raw": "{{baseUrl}}/admin/jobs/{{jobId}}/close",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "jobs", "{{jobId}}", "close"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('400 Bad Request', () => pm.response.to.have.status(400));",
+                  "pm.test('error code', () => pm.expect(pm.response.json().code).to.eql('VALIDATION_ERROR'));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Admin: force-close job",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminAccessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"reason\":\"Offre non conforme aux règles de la plateforme.\"}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/admin/jobs/{{jobId}}/close",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "jobs", "{{jobId}}", "close"]
+            },
+            "description": "{{jobId}} must be a PUBLISHED job: run the Jobs (recruiter) folder first (it ends with the job PUBLISHED again after Renew)."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('200 OK', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test('CLOSED with moderation info', () => { pm.expect(json.status).to.eql('CLOSED'); pm.expect(json.moderatedAt).to.be.a('string'); pm.expect(json.moderationReason).to.be.a('string'); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Admin: force-close again (409)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminAccessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"reason\":\"Deuxième tentative.\"}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/admin/jobs/{{jobId}}/close",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "jobs", "{{jobId}}", "close"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('409 Conflict', () => pm.response.to.have.status(409));",
+                  "pm.test('error code', () => pm.expect(pm.response.json().code).to.eql('JOB_INVALID_TRANSITION'));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Recruiter: cannot renew a moderated job",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{recruiterAccessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/recruiter/jobs/{{jobId}}/renew",
+              "host": ["{{baseUrl}}"],
+              "path": ["recruiter", "jobs", "{{jobId}}", "renew"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('409 Conflict', () => pm.response.to.have.status(409));",
+                  "pm.test('error code', () => pm.expect(pm.response.json().code).to.eql('JOB_MODERATED'));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Admin: list companies",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminAccessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/admin/companies?limit=50",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "companies"],
+              "query": [{ "key": "limit", "value": "50" }]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('200 OK', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test('lists companies with moderation fields', () => { pm.expect(json.items.length).to.be.above(0); pm.expect(json.items[0]).to.have.property('isHidden'); });",
+                  "pm.test('contains the company of recruiterA', () => pm.expect(json.items.map((c) => c.id)).to.include(pm.collectionVariables.get('companyId')));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Admin: hide company",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminAccessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"reason\":\"Signalements multiples en cours de vérification.\"}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/admin/companies/{{companyId}}/hide",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "companies", "{{companyId}}", "hide"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('200 OK', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test('hidden', () => { pm.expect(json.isHidden).to.eql(true); pm.expect(json.hiddenAt).to.be.a('string'); pm.expect(json.hiddenReason).to.be.a('string'); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Public: hidden company page is 404",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/companies/{{companySlug}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["companies", "{{companySlug}}"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('404 Not Found', () => pm.response.to.have.status(404));",
+                  "pm.test('error code', () => pm.expect(pm.response.json().code).to.eql('COMPANY_NOT_FOUND'));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Recruiter: my company shows it is hidden",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{recruiterAccessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/companies/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["companies", "me"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('200 OK', () => pm.response.to.have.status(200));",
+                  "pm.test('isHidden is true', () => pm.expect(pm.response.json().isHidden).to.eql(true));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Admin: hide company again (409)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminAccessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"reason\":\"Deuxième tentative.\"}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/admin/companies/{{companyId}}/hide",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "companies", "{{companyId}}", "hide"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('409 Conflict', () => pm.response.to.have.status(409));",
+                  "pm.test('error code', () => pm.expect(pm.response.json().code).to.eql('COMPANY_ALREADY_HIDDEN'));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Admin: restore company",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminAccessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/admin/companies/{{companyId}}/restore",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "companies", "{{companyId}}", "restore"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('200 OK', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test('visible again', () => { pm.expect(json.isHidden).to.eql(false); pm.expect(json.hiddenAt).to.eql(null); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Public: company page is back (200)",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/companies/{{companySlug}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["companies", "{{companySlug}}"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('200 OK', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Admin: create skill",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminAccessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"slug\":\"{{skillSlug}}\",\"name\":\"Postman {{skillSlug}}\",\"aliases\":[\"alias-{{skillSlug}}\"]}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/admin/skills",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "skills"]
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.collectionVariables.set('skillSlug', 'pm-skill-' + Date.now());"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('201 Created', () => pm.response.to.have.status(201));",
+                  "const json = pm.response.json();",
+                  "pm.test('slug and alias stored', () => { pm.expect(json.slug).to.eql(pm.collectionVariables.get('skillSlug')); pm.expect(json.aliases).to.have.length(1); });",
+                  "pm.collectionVariables.set('skillId', json.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Admin: create skill with a taken alias (409)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminAccessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"slug\":\"conflict-skill\",\"name\":\"Conflict Skill\",\"aliases\":[\"node\"]}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/admin/skills",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "skills"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('409 Conflict', () => pm.response.to.have.status(409));",
+                  "const json = pm.response.json();",
+                  "pm.test('error code and owner', () => { pm.expect(json.code).to.eql('SKILL_CONFLICT'); pm.expect(json.details.with).to.eql('nodejs'); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Admin: update skill",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminAccessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"name\":\"Postman updated {{skillSlug}}\",\"aliases\":[\"alias2-{{skillSlug}}\"]}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/admin/skills/{{skillId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "skills", "{{skillId}}"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('200 OK', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test('renamed and aliases replaced', () => { pm.expect(json.name).to.include('updated'); pm.expect(json.aliases).to.eql(['alias2-' + pm.collectionVariables.get('skillSlug')]); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Admin: delete skill",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminAccessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/admin/skills/{{skillId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "skills", "{{skillId}}"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('204 No Content', () => pm.response.to.have.status(204));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Candidate cannot use admin routes",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{candidateAccessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/admin/jobs",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "jobs"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('403 Forbidden', () => pm.response.to.have.status(403));",
+                  "pm.test('error code', () => pm.expect(pm.response.json().code).to.eql('AUTH_FORBIDDEN'));"
                 ]
               }
             }

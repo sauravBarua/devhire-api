@@ -1,8 +1,16 @@
-export function isUniqueViolation(error: unknown): boolean {
-  return (
-    typeof error === 'object' &&
+function prismaCode(error: unknown): string | null {
+  return typeof error === 'object' &&
     error !== null &&
     'code' in error &&
-    error.code === 'P2002'
-  );
+    typeof error.code === 'string'
+    ? error.code
+    : null;
+}
+
+export function isUniqueViolation(error: unknown): boolean {
+  return prismaCode(error) === 'P2002';
+}
+
+export function isForeignKeyViolation(error: unknown): boolean {
+  return prismaCode(error) === 'P2003';
 }

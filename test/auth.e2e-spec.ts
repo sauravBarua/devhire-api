@@ -1,22 +1,14 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment --
    supertest response bodies are untyped (any) */
-import { execSync } from 'node:child_process';
 import type { Server } from 'node:http';
 import { Controller, Get, type INestApplication } from '@nestjs/common';
-import { Test } from '@nestjs/testing';
-import {
-  PostgreSqlContainer,
-  type StartedPostgreSqlContainer,
-} from '@testcontainers/postgresql';
 import bcrypt from 'bcrypt';
 import request from 'supertest';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { AppModule } from '../src/app.module';
-import { configureApp } from '../src/app.setup';
 import { Roles } from '../src/common/decorators/roles.decorator';
 import { Role } from '../src/generated/prisma/enums';
 import { PrismaService } from '../src/infra/prisma/prisma.service';
-import { RedisService } from '../src/infra/redis/redis.service';
+import { createTestApp, type TestApp } from './support/test-app';
 
 // test-only controller to exercise the global guards
 @Controller('probe')
@@ -36,8 +28,8 @@ class ProbeController {
 const API = '/api/v1';
 const password = 'Passw0rd!test';
 
+let testApp: TestApp;
 let app: INestApplication;
-let container: StartedPostgreSqlContainer;
 
 const http = () => request(app.getHttpServer() as Server);
 
@@ -66,34 +58,8 @@ const refresh = (cookie?: string) => {
 };
 
 beforeAll(async () => {
-  container = await new PostgreSqlContainer('postgres:17-alpine').start();
-  const databaseUrl = container.getConnectionUri();
-
-  Object.assign(process.env, {
-    NODE_ENV: 'test',
-    LOG_LEVEL: 'silent',
-    DATABASE_URL: databaseUrl,
-    REDIS_URL: 'redis://localhost:6379',
-    JWT_ACCESS_SECRET: 'test-secret-test-secret-test-secret-1234',
-    BCRYPT_ROUNDS: '4',
-  });
-
-  execSync('pnpm exec prisma migrate deploy', {
-    env: { ...process.env, DATABASE_URL: databaseUrl },
-    stdio: 'inherit',
-  });
-
-  const moduleRef = await Test.createTestingModule({
-    imports: [AppModule],
-    controllers: [ProbeController],
-  })
-    .overrideProvider(RedisService)
-    .useValue({ ping: () => Promise.resolve(true) })
-    .compile();
-
-  app = moduleRef.createNestApplication({ logger: false });
-  configureApp(app);
-  await app.init();
+  testApp = await createTestApp([], {}, [ProbeController]);
+  app = testApp.app;
 
   await app.get(PrismaService).user.create({
     data: {
@@ -107,8 +73,7 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
-  await app?.close();
-  await container?.stop();
+  await testApp?.close();
 });
 
 describe('POST /auth/register', () => {

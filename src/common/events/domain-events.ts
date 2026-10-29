@@ -6,6 +6,8 @@ export const DomainEvents = {
   JobExpired: 'job.expired',
   JobRenewed: 'job.renewed',
   JobExpiringSoon: 'job.expiring_soon',
+  CompanyHidden: 'company.hidden',
+  CompanyRestored: 'company.restored',
   ApplicationCreated: 'application.created',
   ApplicationStatusChanged: 'application.status_changed',
 } as const;
@@ -17,6 +19,9 @@ export type JobEventName =
   | typeof DomainEvents.JobExpired
   | typeof DomainEvents.JobRenewed;
 
+export type CompanyEventName =
+  typeof DomainEvents.CompanyHidden | typeof DomainEvents.CompanyRestored;
+
 export interface JobEventPayload {
   jobId: string;
   companyId: string;
@@ -25,6 +30,11 @@ export interface JobEventPayload {
 
 export interface JobExpiringPayload extends JobEventPayload {
   expiresAt: Date;
+}
+
+export interface CompanyEventPayload {
+  companyId: string;
+  occurredAt: Date;
 }
 
 export interface ApplicationCreatedPayload {

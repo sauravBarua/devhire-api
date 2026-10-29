@@ -8,10 +8,13 @@ import {
   Post,
   Req,
   Res,
+  UseGuards,
 } from '@nestjs/common';
 import type { Request, Response } from 'express';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
 import { Public } from '../../common/decorators/public.decorator';
+import { OriginGuard } from '../../common/guards/origin.guard';
+import { ThrottleTier } from '../../common/throttling/throttle-tier';
 import type { AuthUser } from '../../common/types/auth-user';
 import { ENV, type Env } from '../../config/env';
 import { AuthService, type PublicUser, type Session } from './auth.service';
@@ -40,6 +43,7 @@ export class AuthController {
   ) {}
 
   @Public()
+  @ThrottleTier('strict')
   @Post('register')
   async register(
     @Body() dto: RegisterDto,
@@ -49,6 +53,7 @@ export class AuthController {
   }
 
   @Public()
+  @ThrottleTier('strict')
   @HttpCode(HttpStatus.OK)
   @Post('login')
   async login(
@@ -59,6 +64,8 @@ export class AuthController {
   }
 
   @Public()
+  @ThrottleTier('strict')
+  @UseGuards(OriginGuard)
   @HttpCode(HttpStatus.OK)
   @Post('refresh')
   async refresh(
@@ -69,6 +76,7 @@ export class AuthController {
   }
 
   @Public()
+  @UseGuards(OriginGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   @Post('logout')
   async logout(

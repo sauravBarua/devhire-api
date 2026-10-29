@@ -55,9 +55,15 @@ describe('parseEnv', () => {
   });
 
   it('treats blank optional values as unset', () => {
-    const env = parseEnv({ ...base, CLOUDINARY_CLOUD_NAME: '', SMTP_USER: '' });
+    const env = parseEnv({
+      ...base,
+      CLOUDINARY_CLOUD_NAME: '',
+      SMTP_USER: '',
+      SENTRY_DSN: '',
+    });
     expect(env.CLOUDINARY_CLOUD_NAME).toBeUndefined();
     expect(env.SMTP_USER).toBeUndefined();
+    expect(env.SENTRY_DSN).toBeUndefined();
   });
 
   it('keeps Cloudinary values when set', () => {
@@ -70,6 +76,50 @@ describe('parseEnv', () => {
   it('rejects an invalid WEB_URL', () => {
     expect(() => parseEnv({ ...base, WEB_URL: 'not a url' })).toThrow(
       /WEB_URL/,
+    );
+  });
+
+  it('defaults the security settings', () => {
+    const env = parseEnv(base);
+    expect(env.CORS_ORIGINS).toEqual(['http://localhost:3001']);
+    expect(env.TRUST_PROXY).toBe(0);
+    expect(env.THROTTLE_TTL_SECONDS).toBe(60);
+    expect(env.THROTTLE_LIMIT).toBe(100);
+    expect(env.THROTTLE_STRICT_LIMIT).toBe(10);
+    expect(env.SHUTDOWN_TIMEOUT_MS).toBe(15000);
+    expect(env.SHUTDOWN_DRAIN_MS).toBe(0);
+  });
+
+  it('parses CORS_ORIGINS into a list of normalized origins', () => {
+    const env = parseEnv({
+      ...base,
+      CORS_ORIGINS:
+        'http://localhost:3001, https://app.example.com/ ,http://localhost:3001',
+    });
+    expect(env.CORS_ORIGINS).toEqual([
+      'http://localhost:3001',
+      'https://app.example.com',
+    ]);
+  });
+
+  it('rejects a wildcard or malformed CORS origin', () => {
+    expect(() => parseEnv({ ...base, CORS_ORIGINS: '*' })).toThrow(
+      /CORS_ORIGINS/,
+    );
+    expect(() => parseEnv({ ...base, CORS_ORIGINS: 'localhost:3001' })).toThrow(
+      /CORS_ORIGINS/,
+    );
+  });
+
+  it('rejects an invalid SENTRY_DSN', () => {
+    expect(() => parseEnv({ ...base, SENTRY_DSN: 'not-a-dsn' })).toThrow(
+      /SENTRY_DSN/,
+    );
+  });
+
+  it('rejects a shutdown timeout under one second', () => {
+    expect(() => parseEnv({ ...base, SHUTDOWN_TIMEOUT_MS: '10' })).toThrow(
+      /SHUTDOWN_TIMEOUT_MS/,
     );
   });
 });

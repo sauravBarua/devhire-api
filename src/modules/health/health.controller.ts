@@ -1,15 +1,19 @@
 import { Controller, Get, HttpStatus } from '@nestjs/common';
+import { SkipThrottle } from '@nestjs/throttler';
 import { Public } from '../../common/decorators/public.decorator';
 import { AppException } from '../../common/errors/app.exception';
 import { PrismaService } from '../../infra/prisma/prisma.service';
 import { RedisService } from '../../infra/redis/redis.service';
+import { ShutdownState } from '../../infra/shutdown/shutdown.state';
 
 @Public()
+@SkipThrottle()
 @Controller('health')
 export class HealthController {
   constructor(
     private readonly prisma: PrismaService,
     private readonly redis: RedisService,
+    private readonly shutdown: ShutdownState,
   ) {}
 
   @Get('live')
@@ -22,6 +26,14 @@ export class HealthController {
     status: 'ok';
     checks: { database: 'up'; redis: 'up' };
   }> {
+    // during shutdown, tell the load balancer to stop sending traffic
+    if (this.shutdown.isShuttingDown) {
+      throw new AppException(
+        HttpStatus.SERVICE_UNAVAILABLE,
+        'SHUTTING_DOWN',
+        'Server is shutting down',
+      );
+    }
     const [database, redis] = await Promise.all([
       this.checkDatabase(),
       this.redis.ping(),

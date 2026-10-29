@@ -4,10 +4,27 @@ import { z } from 'zod';
 export const ENV = Symbol('ENV');
 
 // blank values in .env ("KEY=") count as unset
+const blankToUndefined = (value: unknown): unknown =>
+  value === '' ? undefined : value;
 const optionalString = z.preprocess(
-  (value) => (value === '' ? undefined : value),
+  blankToUndefined,
   z.string().min(1).optional(),
 );
+
+// "a,b" -> ["https://a", "https://b"]; only http(s) origins are valid ("*" and "localhost:3001" are not)
+const corsOrigins = z
+  .string()
+  .default('http://localhost:3001')
+  .transform((value) =>
+    value
+      .split(',')
+      .map((part) => part.trim())
+      .filter((part) => part.length > 0),
+  )
+  .pipe(z.array(z.url({ protocol: /^https?$/ })).min(1))
+  .transform((list) => [
+    ...new Set(list.map((entry) => new URL(entry).origin)),
+  ]);
 
 export const envSchema = z.object({
   NODE_ENV: z
@@ -36,6 +53,15 @@ export const envSchema = z.object({
   MAIL_FROM: z.string().min(3).default('DevHire <no-reply@devhire.test>'),
   WEB_URL: z.url().default('http://localhost:3001'),
   QUEUE_BACKOFF_MS: z.coerce.number().int().min(10).default(5000),
+  CORS_ORIGINS: corsOrigins,
+  // number of reverse proxies in front of the API (Nginx = 1); 0 trusts nobody
+  TRUST_PROXY: z.coerce.number().int().min(0).max(10).default(0),
+  THROTTLE_TTL_SECONDS: z.coerce.number().int().min(1).default(60),
+  THROTTLE_LIMIT: z.coerce.number().int().min(1).default(100),
+  THROTTLE_STRICT_LIMIT: z.coerce.number().int().min(1).default(10),
+  SENTRY_DSN: z.preprocess(blankToUndefined, z.url().optional()),
+  SHUTDOWN_TIMEOUT_MS: z.coerce.number().int().min(1000).default(15000),
+  SHUTDOWN_DRAIN_MS: z.coerce.number().int().min(0).max(60000).default(0),
 });
 
 export type Env = z.infer<typeof envSchema>;

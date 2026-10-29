@@ -29,6 +29,9 @@ export interface JobView {
   publishedAt: Date | null;
   expiresAt: Date | null;
   closedAt: Date | null;
+  // set when an admin force-closed the job; the owner cannot renew such a job
+  moderatedAt: Date | null;
+  moderationReason: string | null;
   // whole days since first publication; renewals do not reset it
   postedDaysAgo: number | null;
   skills: JobSkillView[];
@@ -65,6 +68,8 @@ export function toJobView(
     publishedAt: job.publishedAt,
     expiresAt: job.expiresAt,
     closedAt: job.closedAt,
+    moderatedAt: job.moderatedAt,
+    moderationReason: job.moderationReason,
     postedDaysAgo: daysSince(job.publishedAt, now),
     skills,
     createdAt: job.createdAt,

@@ -20,7 +20,11 @@ import { ENV, type Env } from '../../config/env';
             res.setHeader('x-request-id', id);
             return id;
           },
-          redact: ['req.headers.authorization', 'req.headers.cookie'],
+          redact: [
+            'req.headers.authorization',
+            'req.headers.cookie',
+            'res.headers["set-cookie"]',
+          ],
           autoLogging: {
             ignore: (req: IncomingMessage) =>
               req.url?.includes('/health') ?? false,

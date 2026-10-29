@@ -8,6 +8,7 @@ import {
 } from '@nestjs/common';
 import type { Request, Response } from 'express';
 import { ZodValidationException } from 'nestjs-zod';
+import { captureServerError } from '../../infra/sentry/sentry';
 import { AppException } from '../errors/app.exception';
 
 interface NormalizedError {
@@ -70,6 +71,8 @@ export class AllExceptionsFilter implements ExceptionFilter {
         exception instanceof Error ? exception.stack : undefined,
       );
     }
+    // only unexpected failures go to Sentry; deliberate 5xx responses (503 while a dependency is down) do not
+    if (!(exception instanceof HttpException)) captureServerError(exception);
 
     res.status(error.status).json({
       statusCode: error.status,

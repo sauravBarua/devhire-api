@@ -106,6 +106,8 @@ model Company {
   logoUrl      String?
   logoSize     Int?
   logoMime     String?
+  hiddenAt     DateTime?
+  hiddenReason String?
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
   jobs         Job[]
@@ -139,6 +141,8 @@ model Job {
   expiresAt            DateTime?
   closedAt             DateTime?
   expiryReminderSentAt DateTime?
+  moderatedAt          DateTime?
+  moderationReason     String?
   searchVector         Unsupported("tsvector")?
   createdAt            DateTime        @default(now())
   updatedAt            DateTime        @updatedAt
@@ -157,7 +161,7 @@ model JobSkill {
   jobId   String
   skillId String
   job     Job    @relation(fields: [jobId], references: [id], onDelete: Cascade)
-  skill   Skill  @relation(fields: [skillId], references: [id], onDelete: Cascade)
+  skill   Skill  @relation(fields: [skillId], references: [id], onDelete: Restrict)
 
   @@id([jobId, skillId])
   @@index([skillId])

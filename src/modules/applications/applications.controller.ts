@@ -13,6 +13,8 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
 import { Roles } from '../../common/decorators/roles.decorator';
+import { CV_UPLOAD_LIMITS } from '../../common/files/upload-limits';
+import { ThrottleTier } from '../../common/throttling/throttle-tier';
 import type { AuthUser } from '../../common/types/auth-user';
 import { Role } from '../../generated/prisma/enums';
 import {
@@ -28,18 +30,17 @@ import {
   UpdateApplicationStatusDto,
 } from './dto/application.dto';
 
-const MAX_CV_BYTES = 5 * 1024 * 1024;
-
 @Controller()
 export class ApplicationsController {
   constructor(private readonly applications: ApplicationsService) {}
 
   @Roles(Role.CANDIDATE)
+  @ThrottleTier('strict')
   @Post('jobs/:jobId/applications')
   @UseInterceptors(
     FileInterceptor('cv', {
       storage: memoryStorage(),
-      limits: { fileSize: MAX_CV_BYTES, files: 1 },
+      limits: CV_UPLOAD_LIMITS,
     }),
   )
   apply(

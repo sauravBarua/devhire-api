@@ -1,12 +1,15 @@
 import { execSync } from 'node:child_process';
 import type { Server } from 'node:http';
 import type { INestApplication, Type } from '@nestjs/common';
+import type { NestExpressApplication } from '@nestjs/platform-express';
 import { Test } from '@nestjs/testing';
 import { PostgreSqlContainer } from '@testcontainers/postgresql';
 import { RedisContainer } from '@testcontainers/redis';
 import request from 'supertest';
 import { AppModule } from '../../src/app.module';
 import { configureApp } from '../../src/app.setup';
+import { ENV, type Env } from '../../src/config/env';
+import { MailerService } from '../../src/infra/mailer/mailer.service';
 
 export interface Override {
   provide: Type<unknown>;
@@ -14,15 +17,24 @@ export interface Override {
 }
 
 export interface TestApp {
-  app: INestApplication;
+  app: NestExpressApplication;
   close: () => Promise<void>;
 }
 
 export const TEST_PASSWORD = 'Passw0rd!test';
 
-// starts throwaway Postgres + Redis, applies migrations and boots the real AppModule
+// by default no test ever sends a real email, whatever SMTP settings a developer has in .env
+const silentMailer: Override = {
+  provide: MailerService,
+  useValue: { send: () => Promise.resolve() },
+};
+
+// starts throwaway Postgres + Redis, applies migrations and boots the real AppModule.
+// extraEnv overrides the defaults below (for example low throttle limits).
 export async function createTestApp(
   overrides: Override[] = [],
+  extraEnv: Record<string, string> = {},
+  extraControllers: Type<unknown>[] = [],
 ): Promise<TestApp> {
   const [postgres, redis] = await Promise.all([
     new PostgreSqlContainer('postgres:17-alpine').start(),
@@ -41,6 +53,14 @@ export async function createTestApp(
     JOB_EXPIRY_REMINDER_DAYS: '3',
     QUEUE_BACKOFF_MS: '50',
     WEB_URL: 'http://localhost:3001',
+    CORS_ORIGINS: 'http://localhost:3001',
+    TRUST_PROXY: '0',
+    THROTTLE_TTL_SECONDS: '60',
+    THROTTLE_LIMIT: '100000',
+    THROTTLE_STRICT_LIMIT: '100000',
+    // blank on purpose: dotenv would otherwise fill it from a developer .env and tests would report to Sentry
+    SENTRY_DSN: '',
+    ...extraEnv,
   });
 
   execSync('pnpm exec prisma migrate deploy', {
@@ -48,16 +68,21 @@ export async function createTestApp(
     stdio: 'inherit',
   });
 
-  let builder = Test.createTestingModule({ imports: [AppModule] });
-  for (const override of overrides) {
+  let builder = Test.createTestingModule({
+    imports: [AppModule],
+    controllers: extraControllers,
+  });
+  for (const override of [silentMailer, ...overrides]) {
     builder = builder
       .overrideProvider(override.provide)
       .useValue(override.useValue);
   }
   const moduleRef = await builder.compile();
 
-  const app = moduleRef.createNestApplication({ logger: false });
-  configureApp(app);
+  const app = moduleRef.createNestApplication<NestExpressApplication>({
+    logger: false,
+  });
+  configureApp(app, app.get<Env>(ENV));
   // listen once on a random port so concurrent supertest requests share one server
   await app.listen(0);
 

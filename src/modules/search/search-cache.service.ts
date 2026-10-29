@@ -59,6 +59,8 @@ export class SearchCacheService {
   @OnEvent(DomainEvents.JobClosed)
   @OnEvent(DomainEvents.JobExpired)
   @OnEvent(DomainEvents.JobRenewed)
+  @OnEvent(DomainEvents.CompanyHidden)
+  @OnEvent(DomainEvents.CompanyRestored)
   invalidate(): void {
     // issued synchronously, so a search started after the transition always sees the new version
     this.redis.client
