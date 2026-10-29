@@ -16,6 +16,21 @@ describe('parseEnv', () => {
     expect(env.ACCESS_TOKEN_TTL_SECONDS).toBe(900);
   });
 
+  it('defaults the mail settings to the MailHog container', () => {
+    const env = parseEnv(base);
+    expect(env.SMTP_HOST).toBe('localhost');
+    expect(env.SMTP_PORT).toBe(1025);
+    expect(env.SMTP_SECURE).toBe(false);
+    expect(env.WEB_URL).toBe('http://localhost:3001');
+    expect(env.JOB_EXPIRY_REMINDER_DAYS).toBe(3);
+    expect(env.QUEUE_BACKOFF_MS).toBe(5000);
+  });
+
+  it('parses SMTP_SECURE as a boolean', () => {
+    expect(parseEnv({ ...base, SMTP_SECURE: 'true' }).SMTP_SECURE).toBe(true);
+    expect(parseEnv({ ...base, SMTP_SECURE: 'false' }).SMTP_SECURE).toBe(false);
+  });
+
   it('coerces JOB_DEFAULT_EXPIRY_DAYS to a number', () => {
     expect(
       parseEnv({ ...base, JOB_DEFAULT_EXPIRY_DAYS: '14' })
@@ -39,14 +54,10 @@ describe('parseEnv', () => {
     );
   });
 
-  it('treats blank Cloudinary values as unset', () => {
-    const env = parseEnv({
-      ...base,
-      CLOUDINARY_CLOUD_NAME: '',
-      CLOUDINARY_API_KEY: '',
-    });
+  it('treats blank optional values as unset', () => {
+    const env = parseEnv({ ...base, CLOUDINARY_CLOUD_NAME: '', SMTP_USER: '' });
     expect(env.CLOUDINARY_CLOUD_NAME).toBeUndefined();
-    expect(env.CLOUDINARY_API_KEY).toBeUndefined();
+    expect(env.SMTP_USER).toBeUndefined();
   });
 
   it('keeps Cloudinary values when set', () => {
@@ -54,5 +65,11 @@ describe('parseEnv', () => {
       parseEnv({ ...base, CLOUDINARY_CLOUD_NAME: 'demo' })
         .CLOUDINARY_CLOUD_NAME,
     ).toBe('demo');
+  });
+
+  it('rejects an invalid WEB_URL', () => {
+    expect(() => parseEnv({ ...base, WEB_URL: 'not a url' })).toThrow(
+      /WEB_URL/,
+    );
   });
 });

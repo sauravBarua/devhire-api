@@ -192,9 +192,10 @@ export class JobsService {
     );
 
     // conditional update: if the status changed since we read it, nothing is written
+    const startsNewPeriod = action === 'publish' || action === 'renew';
     const result = await this.prisma.job.updateMany({
       where: { id: job.id, status: job.status },
-      data: next,
+      data: startsNewPeriod ? { ...next, expiryReminderSentAt: null } : next,
     });
     if (result.count === 0) {
       throw new AppException(

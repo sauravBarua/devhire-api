@@ -58,6 +58,11 @@ enum ApplicationStatus {
   HIRED
 }
 
+enum AlertFrequency {
+  INSTANT
+  DAILY
+}
+
 model User {
   id            String         @id @default(uuid())
   email         String         @unique
@@ -70,6 +75,8 @@ model User {
   refreshTokens RefreshToken[]
   company       Company?
   applications  Application[]
+  savedJobs     SavedJob[]
+  savedSearches SavedSearch[]
 }
 
 model RefreshToken {
@@ -114,28 +121,31 @@ model Skill {
 }
 
 model Job {
-  id              String          @id @default(uuid())
-  companyId       String
-  company         Company         @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  title           String
-  description     String
-  category        JobCategory
-  contractType    ContractType
-  remotePolicy    RemotePolicy
-  experienceLevel ExperienceLevel
-  city            String?
-  region          String?
-  salaryMin       Int?
-  salaryMax       Int?
-  status          JobStatus       @default(DRAFT)
-  publishedAt     DateTime?
-  expiresAt       DateTime?
-  closedAt        DateTime?
-  searchVector    Unsupported("tsvector")?
-  createdAt       DateTime        @default(now())
-  updatedAt       DateTime        @updatedAt
-  skills          JobSkill[]
-  applications    Application[]
+  id                   String          @id @default(uuid())
+  companyId            String
+  company              Company         @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  title                String
+  description          String
+  category             JobCategory
+  contractType         ContractType
+  remotePolicy         RemotePolicy
+  experienceLevel      ExperienceLevel
+  city                 String?
+  region               String?
+  salaryMin            Int?
+  salaryMax            Int?
+  status               JobStatus       @default(DRAFT)
+  publishedAt          DateTime?
+  expiresAt            DateTime?
+  closedAt             DateTime?
+  expiryReminderSentAt DateTime?
+  searchVector         Unsupported("tsvector")?
+  createdAt            DateTime        @default(now())
+  updatedAt            DateTime        @updatedAt
+  skills               JobSkill[]
+  applications         Application[]
+  savedBy              SavedJob[]
+  alertMatches         AlertMatch[]
 
   @@index([status, publishedAt])
   @@index([status, expiresAt])
@@ -171,4 +181,47 @@ model Application {
   @@unique([jobId, candidateId])
   @@index([candidateId, createdAt])
   @@index([jobId, status])
+}
+
+model SavedJob {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  jobId     String
+  job       Job      @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, jobId])
+  @@index([userId, createdAt])
+}
+
+model SavedSearch {
+  id            String         @id @default(uuid())
+  userId        String
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name          String
+  filters       Json
+  frequency     AlertFrequency @default(DAILY)
+  alertsEnabled Boolean        @default(true)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  matches       AlertMatch[]
+
+  @@index([userId])
+  @@index([alertsEnabled])
+}
+
+// One row per (saved search, job). The unique key is what guarantees a job is never sent twice to the same search.
+model AlertMatch {
+  id            String      @id @default(uuid())
+  savedSearchId String
+  savedSearch   SavedSearch @relation(fields: [savedSearchId], references: [id], onDelete: Cascade)
+  jobId         String
+  job           Job         @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  createdAt     DateTime    @default(now())
+  notifiedAt    DateTime?
+
+  @@unique([savedSearchId, jobId])
+  @@index([savedSearchId, notifiedAt])
+  @@index([notifiedAt])
 }

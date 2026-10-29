@@ -5,10 +5,12 @@ export const DomainEvents = {
   JobClosed: 'job.closed',
   JobExpired: 'job.expired',
   JobRenewed: 'job.renewed',
+  JobExpiringSoon: 'job.expiring_soon',
   ApplicationCreated: 'application.created',
   ApplicationStatusChanged: 'application.status_changed',
 } as const;
 
+// events that change whether a job is visible (used by the search cache and the lifecycle service)
 export type JobEventName =
   | typeof DomainEvents.JobPublished
   | typeof DomainEvents.JobClosed
@@ -19,6 +21,10 @@ export interface JobEventPayload {
   jobId: string;
   companyId: string;
   occurredAt: Date;
+}
+
+export interface JobExpiringPayload extends JobEventPayload {
+  expiresAt: Date;
 }
 
 export interface ApplicationCreatedPayload {

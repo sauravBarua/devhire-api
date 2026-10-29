@@ -89,6 +89,15 @@ export class CompaniesService {
     return rows.map(toView);
   }
 
+  // public entry point for other modules (notifications): who owns this company?
+  async findOwnerId(companyId: string): Promise<string | null> {
+    const row = await this.prisma.company.findUnique({
+      where: { id: companyId },
+      select: { ownerId: true },
+    });
+    return row?.ownerId ?? null;
+  }
+
   async getOwn(ownerId: string): Promise<CompanyView> {
     return toView(await this.requireOwned(ownerId));
   }

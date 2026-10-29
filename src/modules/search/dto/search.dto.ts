@@ -33,24 +33,44 @@ const salary = z.preprocess(
   z.coerce.number().int().min(0).max(1_000_000).optional(),
 );
 
+// the criteria of a search; saved searches store exactly these fields
+const filterFields = {
+  q: text(200),
+  category: list(z.string().toUpperCase().pipe(z.enum(JobCategory))),
+  contractType: list(z.string().toUpperCase().pipe(z.enum(ContractType))),
+  remotePolicy: list(z.string().toUpperCase().pipe(z.enum(RemotePolicy))),
+  experienceLevel: list(z.string().toUpperCase().pipe(z.enum(ExperienceLevel))),
+  skills: list(z.string().trim().toLowerCase().min(1).max(50)),
+  city: text(100),
+  region: text(100),
+  salaryMin: salary,
+  salaryMax: salary,
+  postedWithin: z.preprocess(
+    blankToUndefined,
+    z.enum(['24h', '7d', '14d', '30d']).optional(),
+  ),
+};
+
+const salaryOrdered = (value: {
+  salaryMin?: number;
+  salaryMax?: number;
+}): boolean =>
+  value.salaryMin === undefined ||
+  value.salaryMax === undefined ||
+  value.salaryMin <= value.salaryMax;
+
+const salaryIssue = {
+  message: 'salaryMin must be less than or equal to salaryMax',
+  path: ['salaryMin'],
+};
+
+export const searchFiltersSchema = z
+  .object(filterFields)
+  .refine(salaryOrdered, salaryIssue);
+
 export const searchQuerySchema = z
   .object({
-    q: text(200),
-    category: list(z.string().toUpperCase().pipe(z.enum(JobCategory))),
-    contractType: list(z.string().toUpperCase().pipe(z.enum(ContractType))),
-    remotePolicy: list(z.string().toUpperCase().pipe(z.enum(RemotePolicy))),
-    experienceLevel: list(
-      z.string().toUpperCase().pipe(z.enum(ExperienceLevel)),
-    ),
-    skills: list(z.string().trim().toLowerCase().min(1).max(50)),
-    city: text(100),
-    region: text(100),
-    salaryMin: salary,
-    salaryMax: salary,
-    postedWithin: z.preprocess(
-      blankToUndefined,
-      z.enum(['24h', '7d', '14d', '30d']).optional(),
-    ),
+    ...filterFields,
     sort: z.preprocess(
       blankToUndefined,
       z.enum(['relevance', 'date']).optional(),
@@ -61,16 +81,7 @@ export const searchQuerySchema = z
     ),
     cursor: text(400),
   })
-  .refine(
-    (value) =>
-      value.salaryMin === undefined ||
-      value.salaryMax === undefined ||
-      value.salaryMin <= value.salaryMax,
-    {
-      message: 'salaryMin must be less than or equal to salaryMax',
-      path: ['salaryMin'],
-    },
-  );
+  .refine(salaryOrdered, salaryIssue);
 
 export type SearchQuery = z.output<typeof searchQuerySchema>;
 

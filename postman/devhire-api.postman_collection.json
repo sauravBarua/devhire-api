@@ -24,6 +24,7 @@
     { "key": "searchJobId", "value": "" },
     { "key": "searchCursor", "value": "" },
     { "key": "applicationId", "value": "" },
+    { "key": "savedSearchId", "value": "" },
     { "key": "candidateEmail", "value": "candidatea@devhire.test" },
     { "key": "recruiterEmail", "value": "recruitera@devhire.test" },
     { "key": "adminEmail", "value": "admin@devhire.test" },
@@ -756,7 +757,8 @@
               "raw": "{{baseUrl}}/recruiter/jobs/{{jobId}}/publish",
               "host": ["{{baseUrl}}"],
               "path": ["recruiter", "jobs", "{{jobId}}", "publish"]
-            }
+            },
+            "description": "Publishing triggers alert matching: a candidate with a matching INSTANT saved search receives an email in MailHog (http://localhost:8025)."
           },
           "event": [
             {
@@ -1333,7 +1335,7 @@
               "host": ["{{baseUrl}}"],
               "path": ["jobs", "{{jobId}}", "applications"]
             },
-            "description": "Run the Jobs (recruiter) folder first so {{jobId}} is a PUBLISHED job. Select a small PDF in the 'cv' field (max 5 MB). Needs Cloudinary values in .env, otherwise 503 UPLOADS_NOT_CONFIGURED."
+            "description": "Run the Jobs (recruiter) folder first so {{jobId}} is a PUBLISHED job. Select a small PDF in the 'cv' field (max 5 MB). Needs Cloudinary values in .env, otherwise 503 UPLOADS_NOT_CONFIGURED. On success the recruiter gets an email in MailHog (http://localhost:8025)."
           },
           "event": [
             {
@@ -1614,6 +1616,378 @@
                 "exec": [
                   "pm.test('403 Forbidden', () => pm.response.to.have.status(403));",
                   "pm.test('error code', () => pm.expect(pm.response.json().code).to.eql('AUTH_FORBIDDEN'));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Saved jobs (candidate)",
+      "item": [
+        {
+          "name": "Save job (candidateA)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{candidateAccessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/saved-jobs/{{jobId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["saved-jobs", "{{jobId}}"]
+            },
+            "description": "Use a job that is not a draft ({{jobId}} after the Jobs folder). Saving twice is allowed and returns the same record."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('200 OK', () => pm.response.to.have.status(200));",
+                  "pm.test('jobId matches', () => pm.expect(pm.response.json().jobId).to.eql(pm.collectionVariables.get('jobId')));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List saved jobs (candidateA)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{candidateAccessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/saved-jobs?limit=20",
+              "host": ["{{baseUrl}}"],
+              "path": ["saved-jobs"],
+              "query": [{ "key": "limit", "value": "20" }]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('200 OK', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test('has nextCursor field', () => pm.expect(json).to.have.property('nextCursor'));",
+                  "const saved = json.items.find((s) => s.jobId === pm.collectionVariables.get('jobId'));",
+                  "pm.test('contains the saved job', () => pm.expect(saved).to.be.an('object'));",
+                  "pm.test('shows the job and whether it is still open', () => { pm.expect(saved.job.title).to.be.a('string'); pm.expect(saved.job.isOpen).to.be.a('boolean'); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Unsave job (candidateA)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{candidateAccessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/saved-jobs/{{jobId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["saved-jobs", "{{jobId}}"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('204 No Content', () => pm.response.to.have.status(204));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Recruiter cannot save jobs",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{recruiterAccessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/saved-jobs/{{jobId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["saved-jobs", "{{jobId}}"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('403 Forbidden', () => pm.response.to.have.status(403));",
+                  "pm.test('error code', () => pm.expect(pm.response.json().code).to.eql('AUTH_FORBIDDEN'));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Saved searches (candidate)",
+      "item": [
+        {
+          "name": "Create saved search (INSTANT)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{candidateAccessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"name\":\"Backend Node.js\",\"filters\":{\"category\":\"backend\",\"skills\":\"nodejs\"},\"frequency\":\"INSTANT\"}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/saved-searches",
+              "host": ["{{baseUrl}}"],
+              "path": ["saved-searches"]
+            },
+            "description": "Then publish a matching job as recruiterA (Jobs folder) and open MailHog at http://localhost:8025 to see the alert email."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('201 Created', () => pm.response.to.have.status(201));",
+                  "const json = pm.response.json();",
+                  "pm.test('filters are normalized', () => { pm.expect(json.filters.category).to.eql(['BACKEND']); pm.expect(json.filters.skills).to.eql(['nodejs']); });",
+                  "pm.test('alerts are enabled', () => { pm.expect(json.alertsEnabled).to.eql(true); pm.expect(json.frequency).to.eql('INSTANT'); });",
+                  "pm.collectionVariables.set('savedSearchId', json.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List saved searches",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{candidateAccessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/saved-searches",
+              "host": ["{{baseUrl}}"],
+              "path": ["saved-searches"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('200 OK', () => pm.response.to.have.status(200));",
+                  "pm.test('contains the saved search', () => pm.expect(pm.response.json().map((s) => s.id)).to.include(pm.collectionVariables.get('savedSearchId')));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update saved search (daily digest)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{candidateAccessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"name\":\"Backend Node.js (digest)\",\"frequency\":\"DAILY\",\"filters\":{\"category\":\"backend\",\"skills\":\"nodejs\",\"remotePolicy\":\"full_remote\"}}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/saved-searches/{{savedSearchId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["saved-searches", "{{savedSearchId}}"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('200 OK', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test('frequency is DAILY', () => pm.expect(json.frequency).to.eql('DAILY'));",
+                  "pm.test('filters were replaced', () => pm.expect(json.filters.remotePolicy).to.eql(['FULL_REMOTE']));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create saved search without criteria (invalid)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{candidateAccessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"name\":\"Empty\",\"filters\":{}}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/saved-searches",
+              "host": ["{{baseUrl}}"],
+              "path": ["saved-searches"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('400 Bad Request', () => pm.response.to.have.status(400));",
+                  "pm.test('error code', () => pm.expect(pm.response.json().code).to.eql('VALIDATION_ERROR'));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Delete saved search",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{candidateAccessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/saved-searches/{{savedSearchId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["saved-searches", "{{savedSearchId}}"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('204 No Content', () => pm.response.to.have.status(204));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Delete saved search again (not found)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{candidateAccessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/saved-searches/{{savedSearchId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["saved-searches", "{{savedSearchId}}"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('404 Not Found', () => pm.response.to.have.status(404));",
+                  "pm.test('error code', () => pm.expect(pm.response.json().code).to.eql('SAVED_SEARCH_NOT_FOUND'));"
                 ]
               }
             }

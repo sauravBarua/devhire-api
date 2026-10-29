@@ -38,6 +38,9 @@ export async function createTestApp(
     JWT_ACCESS_SECRET: 'test-secret-test-secret-test-secret-1234',
     BCRYPT_ROUNDS: '4',
     JOB_DEFAULT_EXPIRY_DAYS: '30',
+    JOB_EXPIRY_REMINDER_DAYS: '3',
+    QUEUE_BACKOFF_MS: '50',
+    WEB_URL: 'http://localhost:3001',
   });
 
   execSync('pnpm exec prisma migrate deploy', {
@@ -55,7 +58,8 @@ export async function createTestApp(
 
   const app = moduleRef.createNestApplication({ logger: false });
   configureApp(app);
-  await app.init();
+  // listen once on a random port so concurrent supertest requests share one server
+  await app.listen(0);
 
   return {
     app,

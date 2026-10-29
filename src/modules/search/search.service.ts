@@ -3,7 +3,7 @@ import { Prisma } from '../../generated/prisma/client';
 import { PrismaService } from '../../infra/prisma/prisma.service';
 import type { PublicJobView } from '../jobs/jobs.view';
 import { PublicJobsService } from '../jobs/public-jobs.service';
-import type { SearchQuery } from './dto/search.dto';
+import { searchQuerySchema, type SearchQuery } from './dto/search.dto';
 import { SearchCacheService } from './search-cache.service';
 import {
   decodeCursor,
@@ -85,6 +85,17 @@ export class SearchService {
     const result = await this.run(filters, query.limit, query.cursor);
     await slot.store(result);
     return result;
+  }
+
+  // Does a single job match stored search criteria? Used to build alerts for new jobs.
+  async matchesJob(storedFilters: unknown, jobId: string): Promise<boolean> {
+    const parsed = searchQuerySchema.safeParse(storedFilters);
+    if (!parsed.success) return false;
+    const filters = normalizeFilters(parsed.data);
+    const rows = await this.prisma.$queryRaw<Array<{ ok: number }>>(
+      Prisma.sql`SELECT 1 AS "ok" FROM "Job" j WHERE ${this.where(filters)} AND j."id" = ${jobId}::text LIMIT 1`,
+    );
+    return rows.length > 0;
   }
 
   private async run(
