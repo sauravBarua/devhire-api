@@ -37,7 +37,9 @@
             }
           }
         },
-        "tags": ["Auth"],
+        "tags": [
+          "Auth"
+        ],
         "security": []
       }
     },
@@ -77,7 +79,9 @@
             }
           }
         },
-        "tags": ["Auth"],
+        "tags": [
+          "Auth"
+        ],
         "security": []
       }
     },
@@ -117,7 +121,9 @@
             }
           }
         },
-        "tags": ["Auth"],
+        "tags": [
+          "Auth"
+        ],
         "security": []
       }
     },
@@ -150,7 +156,9 @@
             }
           }
         },
-        "tags": ["Auth"],
+        "tags": [
+          "Auth"
+        ],
         "security": []
       }
     },
@@ -180,7 +188,9 @@
             }
           }
         },
-        "tags": ["Auth"],
+        "tags": [
+          "Auth"
+        ],
         "security": [
           {
             "bearer": []
@@ -224,7 +234,9 @@
             }
           }
         },
-        "tags": ["Companies"],
+        "tags": [
+          "Companies"
+        ],
         "security": [
           {
             "bearer": []
@@ -259,7 +271,9 @@
             }
           }
         },
-        "tags": ["Companies"],
+        "tags": [
+          "Companies"
+        ],
         "security": [
           {
             "bearer": []
@@ -302,7 +316,9 @@
             }
           }
         },
-        "tags": ["Companies"],
+        "tags": [
+          "Companies"
+        ],
         "security": [
           {
             "bearer": []
@@ -337,7 +353,9 @@
             }
           }
         },
-        "tags": ["Companies"],
+        "tags": [
+          "Companies"
+        ],
         "security": [
           {
             "bearer": []
@@ -350,7 +368,9 @@
             "multipart/form-data": {
               "schema": {
                 "type": "object",
-                "required": ["file"],
+                "required": [
+                  "file"
+                ],
                 "properties": {
                   "file": {
                     "type": "string",
@@ -399,7 +419,9 @@
             }
           }
         },
-        "tags": ["Companies"],
+        "tags": [
+          "Companies"
+        ],
         "security": []
       }
     },
@@ -432,7 +454,9 @@
             }
           }
         },
-        "tags": ["Skills"],
+        "tags": [
+          "Skills"
+        ],
         "security": []
       }
     },
@@ -472,7 +496,9 @@
             }
           }
         },
-        "tags": ["Recruiter jobs"],
+        "tags": [
+          "Recruiter jobs"
+        ],
         "security": [
           {
             "bearer": []
@@ -489,7 +515,12 @@
             "in": "query",
             "schema": {
               "type": "string",
-              "enum": ["DRAFT", "PUBLISHED", "CLOSED", "EXPIRED"]
+              "enum": [
+                "DRAFT",
+                "PUBLISHED",
+                "CLOSED",
+                "EXPIRED"
+              ]
             }
           },
           {
@@ -536,7 +567,9 @@
             }
           }
         },
-        "tags": ["Recruiter jobs"],
+        "tags": [
+          "Recruiter jobs"
+        ],
         "security": [
           {
             "bearer": []
@@ -580,7 +613,9 @@
             }
           }
         },
-        "tags": ["Recruiter jobs"],
+        "tags": [
+          "Recruiter jobs"
+        ],
         "security": [
           {
             "bearer": []
@@ -632,7 +667,9 @@
             }
           }
         },
-        "tags": ["Recruiter jobs"],
+        "tags": [
+          "Recruiter jobs"
+        ],
         "security": [
           {
             "bearer": []
@@ -667,7 +704,9 @@
             }
           }
         },
-        "tags": ["Recruiter jobs"],
+        "tags": [
+          "Recruiter jobs"
+        ],
         "security": [
           {
             "bearer": []
@@ -711,7 +750,9 @@
             }
           }
         },
-        "tags": ["Recruiter jobs"],
+        "tags": [
+          "Recruiter jobs"
+        ],
         "security": [
           {
             "bearer": []
@@ -755,7 +796,9 @@
             }
           }
         },
-        "tags": ["Recruiter jobs"],
+        "tags": [
+          "Recruiter jobs"
+        ],
         "security": [
           {
             "bearer": []
@@ -799,7 +842,9 @@
             }
           }
         },
-        "tags": ["Recruiter jobs"],
+        "tags": [
+          "Recruiter jobs"
+        ],
         "security": [
           {
             "bearer": []
@@ -843,7 +888,9 @@
             }
           }
         },
-        "tags": ["Jobs"],
+        "tags": [
+          "Jobs"
+        ],
         "security": []
       }
     },
@@ -966,7 +1013,12 @@
             "in": "query",
             "schema": {
               "type": "string",
-              "enum": ["24h", "7d", "14d", "30d"]
+              "enum": [
+                "24h",
+                "7d",
+                "14d",
+                "30d"
+              ]
             }
           },
           {
@@ -975,7 +1027,10 @@
             "in": "query",
             "schema": {
               "type": "string",
-              "enum": ["relevance", "date"]
+              "enum": [
+                "relevance",
+                "date"
+              ]
             }
           },
           {
@@ -1021,7 +1076,9 @@
             }
           }
         },
-        "tags": ["Jobs"],
+        "tags": [
+          "Jobs"
+        ],
         "security": []
       }
     },
@@ -1044,7 +1101,9 @@
             "multipart/form-data": {
               "schema": {
                 "type": "object",
-                "required": ["cv"],
+                "required": [
+                  "cv"
+                ],
                 "properties": {
                   "cv": {
                     "type": "string",
@@ -1082,7 +1141,9 @@
             }
           }
         },
-        "tags": ["Applications"],
+        "tags": [
+          "Applications"
+        ],
         "security": [
           {
             "bearer": []
@@ -1101,7 +1162,13 @@
             "in": "query",
             "schema": {
               "type": "string",
-              "enum": ["NEW", "REVIEWED", "INTERVIEW", "REJECTED", "HIRED"]
+              "enum": [
+                "NEW",
+                "REVIEWED",
+                "INTERVIEW",
+                "REJECTED",
+                "HIRED"
+              ]
             }
           },
           {
@@ -1148,7 +1215,9 @@
             }
           }
         },
-        "tags": ["Applications"],
+        "tags": [
+          "Applications"
+        ],
         "security": [
           {
             "bearer": []
@@ -1175,7 +1244,13 @@
             "in": "query",
             "schema": {
               "type": "string",
-              "enum": ["NEW", "REVIEWED", "INTERVIEW", "REJECTED", "HIRED"]
+              "enum": [
+                "NEW",
+                "REVIEWED",
+                "INTERVIEW",
+                "REJECTED",
+                "HIRED"
+              ]
             }
           },
           {
@@ -1222,7 +1297,9 @@
             }
           }
         },
-        "tags": ["Applications"],
+        "tags": [
+          "Applications"
+        ],
         "security": [
           {
             "bearer": []
@@ -1276,7 +1353,9 @@
             }
           }
         },
-        "tags": ["Applications"],
+        "tags": [
+          "Applications"
+        ],
         "security": [
           {
             "bearer": []
@@ -1320,7 +1399,9 @@
             }
           }
         },
-        "tags": ["Saved jobs"],
+        "tags": [
+          "Saved jobs"
+        ],
         "security": [
           {
             "bearer": []
@@ -1355,7 +1436,9 @@
             }
           }
         },
-        "tags": ["Saved jobs"],
+        "tags": [
+          "Saved jobs"
+        ],
         "security": [
           {
             "bearer": []
@@ -1412,7 +1495,9 @@
             }
           }
         },
-        "tags": ["Saved jobs"],
+        "tags": [
+          "Saved jobs"
+        ],
         "security": [
           {
             "bearer": []
@@ -1457,7 +1542,9 @@
             }
           }
         },
-        "tags": ["Saved searches"],
+        "tags": [
+          "Saved searches"
+        ],
         "security": [
           {
             "bearer": []
@@ -1493,7 +1580,9 @@
             }
           }
         },
-        "tags": ["Saved searches"],
+        "tags": [
+          "Saved searches"
+        ],
         "security": [
           {
             "bearer": []
@@ -1547,7 +1636,9 @@
             }
           }
         },
-        "tags": ["Saved searches"],
+        "tags": [
+          "Saved searches"
+        ],
         "security": [
           {
             "bearer": []
@@ -1582,7 +1673,9 @@
             }
           }
         },
-        "tags": ["Saved searches"],
+        "tags": [
+          "Saved searches"
+        ],
         "security": [
           {
             "bearer": []
@@ -1601,7 +1694,12 @@
             "in": "query",
             "schema": {
               "type": "string",
-              "enum": ["DRAFT", "PUBLISHED", "CLOSED", "EXPIRED"]
+              "enum": [
+                "DRAFT",
+                "PUBLISHED",
+                "CLOSED",
+                "EXPIRED"
+              ]
             }
           },
           {
@@ -1658,7 +1756,9 @@
             }
           }
         },
-        "tags": ["Admin"],
+        "tags": [
+          "Admin"
+        ],
         "security": [
           {
             "bearer": []
@@ -1712,7 +1812,9 @@
             }
           }
         },
-        "tags": ["Admin"],
+        "tags": [
+          "Admin"
+        ],
         "security": [
           {
             "bearer": []
@@ -1787,7 +1889,9 @@
             }
           }
         },
-        "tags": ["Admin"],
+        "tags": [
+          "Admin"
+        ],
         "security": [
           {
             "bearer": []
@@ -1841,7 +1945,9 @@
             }
           }
         },
-        "tags": ["Admin"],
+        "tags": [
+          "Admin"
+        ],
         "security": [
           {
             "bearer": []
@@ -1885,7 +1991,9 @@
             }
           }
         },
-        "tags": ["Admin"],
+        "tags": [
+          "Admin"
+        ],
         "security": [
           {
             "bearer": []
@@ -1930,7 +2038,9 @@
             }
           }
         },
-        "tags": ["Admin"],
+        "tags": [
+          "Admin"
+        ],
         "security": [
           {
             "bearer": []
@@ -1984,7 +2094,9 @@
             }
           }
         },
-        "tags": ["Admin"],
+        "tags": [
+          "Admin"
+        ],
         "security": [
           {
             "bearer": []
@@ -2019,7 +2131,9 @@
             }
           }
         },
-        "tags": ["Admin"],
+        "tags": [
+          "Admin"
+        ],
         "security": [
           {
             "bearer": []
@@ -2054,7 +2168,9 @@
             }
           }
         },
-        "tags": ["Health"],
+        "tags": [
+          "Health"
+        ],
         "security": []
       }
     },
@@ -2084,7 +2200,9 @@
             }
           }
         },
-        "tags": ["Health"],
+        "tags": [
+          "Health"
+        ],
         "security": []
       }
     }
@@ -2164,10 +2282,19 @@
           },
           "role": {
             "type": "string",
-            "enum": ["CANDIDATE", "RECRUITER"]
+            "enum": [
+              "CANDIDATE",
+              "RECRUITER"
+            ]
           }
         },
-        "required": ["email", "password", "firstName", "lastName", "role"]
+        "required": [
+          "email",
+          "password",
+          "firstName",
+          "lastName",
+          "role"
+        ]
       },
       "LoginDto": {
         "type": "object",
@@ -2181,7 +2308,10 @@
             "maxLength": 72
           }
         },
-        "required": ["email", "password"]
+        "required": [
+          "email",
+          "password"
+        ]
       },
       "CreateCompanyDto": {
         "type": "object",
@@ -2205,7 +2335,9 @@
             "maxLength": 100
           }
         },
-        "required": ["name"]
+        "required": [
+          "name"
+        ]
       },
       "UpdateCompanyDto": {
         "type": "object",
@@ -2259,15 +2391,29 @@
           },
           "contractType": {
             "type": "string",
-            "enum": ["CDI", "CDD", "STAGE", "ALTERNANCE", "FREELANCE"]
+            "enum": [
+              "CDI",
+              "CDD",
+              "STAGE",
+              "ALTERNANCE",
+              "FREELANCE"
+            ]
           },
           "remotePolicy": {
             "type": "string",
-            "enum": ["FULL_REMOTE", "HYBRID", "ON_SITE"]
+            "enum": [
+              "FULL_REMOTE",
+              "HYBRID",
+              "ON_SITE"
+            ]
           },
           "experienceLevel": {
             "type": "string",
-            "enum": ["JUNIOR", "MID", "SENIOR"]
+            "enum": [
+              "JUNIOR",
+              "MID",
+              "SENIOR"
+            ]
           },
           "city": {
             "type": "string",
@@ -2335,15 +2481,29 @@
           },
           "contractType": {
             "type": "string",
-            "enum": ["CDI", "CDD", "STAGE", "ALTERNANCE", "FREELANCE"]
+            "enum": [
+              "CDI",
+              "CDD",
+              "STAGE",
+              "ALTERNANCE",
+              "FREELANCE"
+            ]
           },
           "remotePolicy": {
             "type": "string",
-            "enum": ["FULL_REMOTE", "HYBRID", "ON_SITE"]
+            "enum": [
+              "FULL_REMOTE",
+              "HYBRID",
+              "ON_SITE"
+            ]
           },
           "experienceLevel": {
             "type": "string",
-            "enum": ["JUNIOR", "MID", "SENIOR"]
+            "enum": [
+              "JUNIOR",
+              "MID",
+              "SENIOR"
+            ]
           },
           "city": {
             "type": "string",
@@ -2394,10 +2554,18 @@
         "properties": {
           "status": {
             "type": "string",
-            "enum": ["NEW", "REVIEWED", "INTERVIEW", "REJECTED", "HIRED"]
+            "enum": [
+              "NEW",
+              "REVIEWED",
+              "INTERVIEW",
+              "REJECTED",
+              "HIRED"
+            ]
           }
         },
-        "required": ["status"]
+        "required": [
+          "status"
+        ]
       },
       "CreateSavedSearchDto": {
         "type": "object",
@@ -2471,21 +2639,32 @@
               },
               "postedWithin": {
                 "type": "string",
-                "enum": ["24h", "7d", "14d", "30d"]
+                "enum": [
+                  "24h",
+                  "7d",
+                  "14d",
+                  "30d"
+                ]
               }
             }
           },
           "frequency": {
             "default": "DAILY",
             "type": "string",
-            "enum": ["INSTANT", "DAILY"]
+            "enum": [
+              "INSTANT",
+              "DAILY"
+            ]
           },
           "alertsEnabled": {
             "default": true,
             "type": "boolean"
           }
         },
-        "required": ["name", "filters"]
+        "required": [
+          "name",
+          "filters"
+        ]
       },
       "UpdateSavedSearchDto": {
         "type": "object",
@@ -2559,13 +2738,21 @@
               },
               "postedWithin": {
                 "type": "string",
-                "enum": ["24h", "7d", "14d", "30d"]
+                "enum": [
+                  "24h",
+                  "7d",
+                  "14d",
+                  "30d"
+                ]
               }
             }
           },
           "frequency": {
             "type": "string",
-            "enum": ["INSTANT", "DAILY"]
+            "enum": [
+              "INSTANT",
+              "DAILY"
+            ]
           },
           "alertsEnabled": {
             "type": "boolean"
@@ -2581,7 +2768,9 @@
             "maxLength": 500
           }
         },
-        "required": ["reason"]
+        "required": [
+          "reason"
+        ]
       },
       "CreateSkillDto": {
         "type": "object",
@@ -2608,7 +2797,10 @@
             }
           }
         },
-        "required": ["slug", "name"]
+        "required": [
+          "slug",
+          "name"
+        ]
       },
       "UpdateSkillDto": {
         "type": "object",
@@ -2651,7 +2843,12 @@
             "type": "string"
           }
         },
-        "required": ["statusCode", "code", "message", "path"]
+        "required": [
+          "statusCode",
+          "code",
+          "message",
+          "path"
+        ]
       },
       "UserResponse": {
         "type": "object",
@@ -2670,7 +2867,11 @@
           },
           "role": {
             "type": "string",
-            "enum": ["CANDIDATE", "RECRUITER", "ADMIN"]
+            "enum": [
+              "CANDIDATE",
+              "RECRUITER",
+              "ADMIN"
+            ]
           },
           "createdAt": {
             "type": "string",
@@ -2711,7 +2912,11 @@
               },
               "role": {
                 "type": "string",
-                "enum": ["CANDIDATE", "RECRUITER", "ADMIN"]
+                "enum": [
+                  "CANDIDATE",
+                  "RECRUITER",
+                  "ADMIN"
+                ]
               },
               "createdAt": {
                 "type": "string",
@@ -2730,7 +2935,10 @@
             "additionalProperties": false
           }
         },
-        "required": ["accessToken", "user"],
+        "required": [
+          "accessToken",
+          "user"
+        ],
         "additionalProperties": false
       },
       "CompanyResponse": {
@@ -2816,7 +3024,12 @@
             }
           }
         },
-        "required": ["id", "slug", "name", "aliases"],
+        "required": [
+          "id",
+          "slug",
+          "name",
+          "aliases"
+        ],
         "additionalProperties": false
       },
       "JobResponse": {
@@ -2847,15 +3060,29 @@
           },
           "contractType": {
             "type": "string",
-            "enum": ["CDI", "CDD", "STAGE", "ALTERNANCE", "FREELANCE"]
+            "enum": [
+              "CDI",
+              "CDD",
+              "STAGE",
+              "ALTERNANCE",
+              "FREELANCE"
+            ]
           },
           "remotePolicy": {
             "type": "string",
-            "enum": ["FULL_REMOTE", "HYBRID", "ON_SITE"]
+            "enum": [
+              "FULL_REMOTE",
+              "HYBRID",
+              "ON_SITE"
+            ]
           },
           "experienceLevel": {
             "type": "string",
-            "enum": ["JUNIOR", "MID", "SENIOR"]
+            "enum": [
+              "JUNIOR",
+              "MID",
+              "SENIOR"
+            ]
           },
           "city": {
             "type": "array",
@@ -2883,7 +3110,12 @@
           },
           "status": {
             "type": "string",
-            "enum": ["DRAFT", "PUBLISHED", "CLOSED", "EXPIRED"]
+            "enum": [
+              "DRAFT",
+              "PUBLISHED",
+              "CLOSED",
+              "EXPIRED"
+            ]
           },
           "publishedAt": {
             "type": "string",
@@ -2933,7 +3165,10 @@
                   "type": "string"
                 }
               },
-              "required": ["slug", "name"],
+              "required": [
+                "slug",
+                "name"
+              ],
               "additionalProperties": false
             }
           },
@@ -3007,21 +3242,41 @@
                 },
                 "contractType": {
                   "type": "string",
-                  "enum": ["CDI", "CDD", "STAGE", "ALTERNANCE", "FREELANCE"]
+                  "enum": [
+                    "CDI",
+                    "CDD",
+                    "STAGE",
+                    "ALTERNANCE",
+                    "FREELANCE"
+                  ]
                 },
                 "remotePolicy": {
                   "type": "string",
-                  "enum": ["FULL_REMOTE", "HYBRID", "ON_SITE"]
+                  "enum": [
+                    "FULL_REMOTE",
+                    "HYBRID",
+                    "ON_SITE"
+                  ]
                 },
                 "experienceLevel": {
                   "type": "string",
-                  "enum": ["JUNIOR", "MID", "SENIOR"]
+                  "enum": [
+                    "JUNIOR",
+                    "MID",
+                    "SENIOR"
+                  ]
                 },
                 "city": {
-                  "type": ["string", "null"]
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 },
                 "region": {
-                  "type": ["string", "null"]
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 },
                 "salaryMin": {
                   "type": "integer",
@@ -3037,7 +3292,12 @@
                 },
                 "status": {
                   "type": "string",
-                  "enum": ["DRAFT", "PUBLISHED", "CLOSED", "EXPIRED"]
+                  "enum": [
+                    "DRAFT",
+                    "PUBLISHED",
+                    "CLOSED",
+                    "EXPIRED"
+                  ]
                 },
                 "publishedAt": {
                   "type": "string",
@@ -3064,7 +3324,10 @@
                   "nullable": true
                 },
                 "moderationReason": {
-                  "type": ["string", "null"]
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 },
                 "postedDaysAgo": {
                   "type": "integer",
@@ -3084,7 +3347,10 @@
                         "type": "string"
                       }
                     },
-                    "required": ["slug", "name"],
+                    "required": [
+                      "slug",
+                      "name"
+                    ],
                     "additionalProperties": false
                   }
                 },
@@ -3133,7 +3399,10 @@
             }
           }
         },
-        "required": ["items", "nextCursor"],
+        "required": [
+          "items",
+          "nextCursor"
+        ],
         "additionalProperties": false
       },
       "PublicJobResponse": {
@@ -3158,15 +3427,29 @@
           },
           "contractType": {
             "type": "string",
-            "enum": ["CDI", "CDD", "STAGE", "ALTERNANCE", "FREELANCE"]
+            "enum": [
+              "CDI",
+              "CDD",
+              "STAGE",
+              "ALTERNANCE",
+              "FREELANCE"
+            ]
           },
           "remotePolicy": {
             "type": "string",
-            "enum": ["FULL_REMOTE", "HYBRID", "ON_SITE"]
+            "enum": [
+              "FULL_REMOTE",
+              "HYBRID",
+              "ON_SITE"
+            ]
           },
           "experienceLevel": {
             "type": "string",
-            "enum": ["JUNIOR", "MID", "SENIOR"]
+            "enum": [
+              "JUNIOR",
+              "MID",
+              "SENIOR"
+            ]
           },
           "city": {
             "type": "array",
@@ -3194,7 +3477,12 @@
           },
           "status": {
             "type": "string",
-            "enum": ["DRAFT", "PUBLISHED", "CLOSED", "EXPIRED"]
+            "enum": [
+              "DRAFT",
+              "PUBLISHED",
+              "CLOSED",
+              "EXPIRED"
+            ]
           },
           "isOpen": {
             "type": "boolean"
@@ -3235,7 +3523,10 @@
                   "type": "string"
                 }
               },
-              "required": ["slug", "name"],
+              "required": [
+                "slug",
+                "name"
+              ],
               "additionalProperties": false
             }
           },
@@ -3252,13 +3543,25 @@
                 "type": "string"
               },
               "logoUrl": {
-                "type": ["string", "null"]
+                "type": [
+                  "string",
+                  "null"
+                ]
               },
               "city": {
-                "type": ["string", "null"]
+                "type": [
+                  "string",
+                  "null"
+                ]
               }
             },
-            "required": ["id", "slug", "name", "logoUrl", "city"],
+            "required": [
+              "id",
+              "slug",
+              "name",
+              "logoUrl",
+              "city"
+            ],
             "additionalProperties": false
           },
           "description": {
@@ -3315,21 +3618,41 @@
                 },
                 "contractType": {
                   "type": "string",
-                  "enum": ["CDI", "CDD", "STAGE", "ALTERNANCE", "FREELANCE"]
+                  "enum": [
+                    "CDI",
+                    "CDD",
+                    "STAGE",
+                    "ALTERNANCE",
+                    "FREELANCE"
+                  ]
                 },
                 "remotePolicy": {
                   "type": "string",
-                  "enum": ["FULL_REMOTE", "HYBRID", "ON_SITE"]
+                  "enum": [
+                    "FULL_REMOTE",
+                    "HYBRID",
+                    "ON_SITE"
+                  ]
                 },
                 "experienceLevel": {
                   "type": "string",
-                  "enum": ["JUNIOR", "MID", "SENIOR"]
+                  "enum": [
+                    "JUNIOR",
+                    "MID",
+                    "SENIOR"
+                  ]
                 },
                 "city": {
-                  "type": ["string", "null"]
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 },
                 "region": {
-                  "type": ["string", "null"]
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 },
                 "salaryMin": {
                   "type": "integer",
@@ -3345,7 +3668,12 @@
                 },
                 "status": {
                   "type": "string",
-                  "enum": ["DRAFT", "PUBLISHED", "CLOSED", "EXPIRED"]
+                  "enum": [
+                    "DRAFT",
+                    "PUBLISHED",
+                    "CLOSED",
+                    "EXPIRED"
+                  ]
                 },
                 "isOpen": {
                   "type": "boolean"
@@ -3386,7 +3714,10 @@
                         "type": "string"
                       }
                     },
-                    "required": ["slug", "name"],
+                    "required": [
+                      "slug",
+                      "name"
+                    ],
                     "additionalProperties": false
                   }
                 },
@@ -3403,13 +3734,25 @@
                       "type": "string"
                     },
                     "logoUrl": {
-                      "type": ["string", "null"]
+                      "type": [
+                        "string",
+                        "null"
+                      ]
                     },
                     "city": {
-                      "type": ["string", "null"]
+                      "type": [
+                        "string",
+                        "null"
+                      ]
                     }
                   },
-                  "required": ["id", "slug", "name", "logoUrl", "city"],
+                  "required": [
+                    "id",
+                    "slug",
+                    "name",
+                    "logoUrl",
+                    "city"
+                  ],
                   "additionalProperties": false
                 },
                 "excerpt": {
@@ -3469,7 +3812,10 @@
                       "maximum": 9007199254740991
                     }
                   },
-                  "required": ["value", "count"],
+                  "required": [
+                    "value",
+                    "count"
+                  ],
                   "additionalProperties": false
                 }
               },
@@ -3487,7 +3833,10 @@
                       "maximum": 9007199254740991
                     }
                   },
-                  "required": ["value", "count"],
+                  "required": [
+                    "value",
+                    "count"
+                  ],
                   "additionalProperties": false
                 }
               },
@@ -3505,7 +3854,10 @@
                       "maximum": 9007199254740991
                     }
                   },
-                  "required": ["value", "count"],
+                  "required": [
+                    "value",
+                    "count"
+                  ],
                   "additionalProperties": false
                 }
               },
@@ -3523,7 +3875,10 @@
                       "maximum": 9007199254740991
                     }
                   },
-                  "required": ["value", "count"],
+                  "required": [
+                    "value",
+                    "count"
+                  ],
                   "additionalProperties": false
                 }
               },
@@ -3544,7 +3899,11 @@
                       "maximum": 9007199254740991
                     }
                   },
-                  "required": ["value", "label", "count"],
+                  "required": [
+                    "value",
+                    "label",
+                    "count"
+                  ],
                   "additionalProperties": false
                 }
               },
@@ -3562,7 +3921,10 @@
                       "maximum": 9007199254740991
                     }
                   },
-                  "required": ["value", "count"],
+                  "required": [
+                    "value",
+                    "count"
+                  ],
                   "additionalProperties": false
                 }
               }
@@ -3579,7 +3941,12 @@
             "nullable": true
           }
         },
-        "required": ["items", "nextCursor", "total", "facets"],
+        "required": [
+          "items",
+          "nextCursor",
+          "total",
+          "facets"
+        ],
         "additionalProperties": false
       },
       "ApplicationResponse": {
@@ -3593,7 +3960,13 @@
           },
           "status": {
             "type": "string",
-            "enum": ["NEW", "REVIEWED", "INTERVIEW", "REJECTED", "HIRED"]
+            "enum": [
+              "NEW",
+              "REVIEWED",
+              "INTERVIEW",
+              "REJECTED",
+              "HIRED"
+            ]
           },
           "coverLetter": {
             "type": "array",
@@ -3648,10 +4021,19 @@
                 },
                 "status": {
                   "type": "string",
-                  "enum": ["NEW", "REVIEWED", "INTERVIEW", "REJECTED", "HIRED"]
+                  "enum": [
+                    "NEW",
+                    "REVIEWED",
+                    "INTERVIEW",
+                    "REJECTED",
+                    "HIRED"
+                  ]
                 },
                 "coverLetter": {
-                  "type": ["string", "null"]
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 },
                 "cvUrl": {
                   "type": "string"
@@ -3681,11 +4063,19 @@
                       "type": "string"
                     },
                     "city": {
-                      "type": ["string", "null"]
+                      "type": [
+                        "string",
+                        "null"
+                      ]
                     },
                     "status": {
                       "type": "string",
-                      "enum": ["DRAFT", "PUBLISHED", "CLOSED", "EXPIRED"]
+                      "enum": [
+                        "DRAFT",
+                        "PUBLISHED",
+                        "CLOSED",
+                        "EXPIRED"
+                      ]
                     },
                     "isOpen": {
                       "type": "boolean"
@@ -3703,10 +4093,18 @@
                           "type": "string"
                         },
                         "logoUrl": {
-                          "type": ["string", "null"]
+                          "type": [
+                            "string",
+                            "null"
+                          ]
                         }
                       },
-                      "required": ["id", "slug", "name", "logoUrl"],
+                      "required": [
+                        "id",
+                        "slug",
+                        "name",
+                        "logoUrl"
+                      ],
                       "additionalProperties": false
                     }
                   },
@@ -3743,7 +4141,10 @@
             }
           }
         },
-        "required": ["items", "nextCursor"],
+        "required": [
+          "items",
+          "nextCursor"
+        ],
         "additionalProperties": false
       },
       "RecruiterApplicationResponse": {
@@ -3757,7 +4158,13 @@
           },
           "status": {
             "type": "string",
-            "enum": ["NEW", "REVIEWED", "INTERVIEW", "REJECTED", "HIRED"]
+            "enum": [
+              "NEW",
+              "REVIEWED",
+              "INTERVIEW",
+              "REJECTED",
+              "HIRED"
+            ]
           },
           "coverLetter": {
             "type": "array",
@@ -3799,7 +4206,12 @@
                 "type": "string"
               }
             },
-            "required": ["id", "firstName", "lastName", "email"],
+            "required": [
+              "id",
+              "firstName",
+              "lastName",
+              "email"
+            ],
             "additionalProperties": false,
             "nullable": true
           }
@@ -3833,10 +4245,19 @@
                 },
                 "status": {
                   "type": "string",
-                  "enum": ["NEW", "REVIEWED", "INTERVIEW", "REJECTED", "HIRED"]
+                  "enum": [
+                    "NEW",
+                    "REVIEWED",
+                    "INTERVIEW",
+                    "REJECTED",
+                    "HIRED"
+                  ]
                 },
                 "coverLetter": {
-                  "type": ["string", "null"]
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 },
                 "cvUrl": {
                   "type": "string"
@@ -3872,7 +4293,12 @@
                       "type": "string"
                     }
                   },
-                  "required": ["id", "firstName", "lastName", "email"],
+                  "required": [
+                    "id",
+                    "firstName",
+                    "lastName",
+                    "email"
+                  ],
                   "additionalProperties": false,
                   "nullable": true
                 }
@@ -3898,7 +4324,10 @@
             }
           }
         },
-        "required": ["items", "nextCursor"],
+        "required": [
+          "items",
+          "nextCursor"
+        ],
         "additionalProperties": false
       },
       "SavedJobResponse": {
@@ -3916,7 +4345,11 @@
             "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
           }
         },
-        "required": ["id", "jobId", "savedAt"],
+        "required": [
+          "id",
+          "jobId",
+          "savedAt"
+        ],
         "additionalProperties": false
       },
       "SavedJobPageResponse": {
@@ -3948,23 +4381,45 @@
                       "type": "string"
                     },
                     "city": {
-                      "type": ["string", "null"]
+                      "type": [
+                        "string",
+                        "null"
+                      ]
                     },
                     "contractType": {
                       "type": "string",
-                      "enum": ["CDI", "CDD", "STAGE", "ALTERNANCE", "FREELANCE"]
+                      "enum": [
+                        "CDI",
+                        "CDD",
+                        "STAGE",
+                        "ALTERNANCE",
+                        "FREELANCE"
+                      ]
                     },
                     "remotePolicy": {
                       "type": "string",
-                      "enum": ["FULL_REMOTE", "HYBRID", "ON_SITE"]
+                      "enum": [
+                        "FULL_REMOTE",
+                        "HYBRID",
+                        "ON_SITE"
+                      ]
                     },
                     "experienceLevel": {
                       "type": "string",
-                      "enum": ["JUNIOR", "MID", "SENIOR"]
+                      "enum": [
+                        "JUNIOR",
+                        "MID",
+                        "SENIOR"
+                      ]
                     },
                     "status": {
                       "type": "string",
-                      "enum": ["DRAFT", "PUBLISHED", "CLOSED", "EXPIRED"]
+                      "enum": [
+                        "DRAFT",
+                        "PUBLISHED",
+                        "CLOSED",
+                        "EXPIRED"
+                      ]
                     },
                     "isOpen": {
                       "type": "boolean"
@@ -4006,10 +4461,18 @@
                           "type": "string"
                         },
                         "logoUrl": {
-                          "type": ["string", "null"]
+                          "type": [
+                            "string",
+                            "null"
+                          ]
                         }
                       },
-                      "required": ["id", "slug", "name", "logoUrl"],
+                      "required": [
+                        "id",
+                        "slug",
+                        "name",
+                        "logoUrl"
+                      ],
                       "additionalProperties": false
                     }
                   },
@@ -4032,7 +4495,12 @@
                   "nullable": true
                 }
               },
-              "required": ["id", "jobId", "savedAt", "job"],
+              "required": [
+                "id",
+                "jobId",
+                "savedAt",
+                "job"
+              ],
               "additionalProperties": false
             }
           },
@@ -4043,7 +4511,10 @@
             }
           }
         },
-        "required": ["items", "nextCursor"],
+        "required": [
+          "items",
+          "nextCursor"
+        ],
         "additionalProperties": false
       },
       "SavedSearchResponse": {
@@ -4061,7 +4532,10 @@
           },
           "frequency": {
             "type": "string",
-            "enum": ["INSTANT", "DAILY"]
+            "enum": [
+              "INSTANT",
+              "DAILY"
+            ]
           },
           "alertsEnabled": {
             "type": "boolean"
@@ -4099,7 +4573,12 @@
           },
           "status": {
             "type": "string",
-            "enum": ["DRAFT", "PUBLISHED", "CLOSED", "EXPIRED"]
+            "enum": [
+              "DRAFT",
+              "PUBLISHED",
+              "CLOSED",
+              "EXPIRED"
+            ]
           },
           "category": {
             "type": "string",
@@ -4164,7 +4643,12 @@
                 "type": "boolean"
               }
             },
-            "required": ["id", "slug", "name", "isHidden"],
+            "required": [
+              "id",
+              "slug",
+              "name",
+              "isHidden"
+            ],
             "additionalProperties": false,
             "nullable": true
           }
@@ -4200,7 +4684,12 @@
                 },
                 "status": {
                   "type": "string",
-                  "enum": ["DRAFT", "PUBLISHED", "CLOSED", "EXPIRED"]
+                  "enum": [
+                    "DRAFT",
+                    "PUBLISHED",
+                    "CLOSED",
+                    "EXPIRED"
+                  ]
                 },
                 "category": {
                   "type": "string",
@@ -4214,7 +4703,10 @@
                   ]
                 },
                 "city": {
-                  "type": ["string", "null"]
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 },
                 "publishedAt": {
                   "type": "string",
@@ -4241,7 +4733,10 @@
                   "nullable": true
                 },
                 "moderationReason": {
-                  "type": ["string", "null"]
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 },
                 "company": {
                   "type": "object",
@@ -4259,7 +4754,12 @@
                       "type": "boolean"
                     }
                   },
-                  "required": ["id", "slug", "name", "isHidden"],
+                  "required": [
+                    "id",
+                    "slug",
+                    "name",
+                    "isHidden"
+                  ],
                   "additionalProperties": false,
                   "nullable": true
                 }
@@ -4287,7 +4787,10 @@
             }
           }
         },
-        "required": ["items", "nextCursor"],
+        "required": [
+          "items",
+          "nextCursor"
+        ],
         "additionalProperties": false
       },
       "AdminCompanyResponse": {
@@ -4390,16 +4893,28 @@
                   "type": "string"
                 },
                 "description": {
-                  "type": ["string", "null"]
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 },
                 "website": {
-                  "type": ["string", "null"]
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 },
                 "city": {
-                  "type": ["string", "null"]
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 },
                 "logoUrl": {
-                  "type": ["string", "null"]
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 },
                 "isHidden": {
                   "type": "boolean"
@@ -4424,7 +4939,10 @@
                   "nullable": true
                 },
                 "hiddenReason": {
-                  "type": ["string", "null"]
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 }
               },
               "required": [
@@ -4452,7 +4970,10 @@
             }
           }
         },
-        "required": ["items", "nextCursor"],
+        "required": [
+          "items",
+          "nextCursor"
+        ],
         "additionalProperties": false
       },
       "HealthLiveResponse": {
@@ -4460,10 +4981,14 @@
         "properties": {
           "status": {
             "type": "string",
-            "enum": ["ok"]
+            "enum": [
+              "ok"
+            ]
           }
         },
-        "required": ["status"],
+        "required": [
+          "status"
+        ],
         "additionalProperties": false
       },
       "HealthReadyResponse": {
@@ -4471,25 +4996,37 @@
         "properties": {
           "status": {
             "type": "string",
-            "enum": ["ok"]
+            "enum": [
+              "ok"
+            ]
           },
           "checks": {
             "type": "object",
             "properties": {
               "database": {
                 "type": "string",
-                "enum": ["up"]
+                "enum": [
+                  "up"
+                ]
               },
               "redis": {
                 "type": "string",
-                "enum": ["up"]
+                "enum": [
+                  "up"
+                ]
               }
             },
-            "required": ["database", "redis"],
+            "required": [
+              "database",
+              "redis"
+            ],
             "additionalProperties": false
           }
         },
-        "required": ["status", "checks"],
+        "required": [
+          "status",
+          "checks"
+        ],
         "additionalProperties": false
       }
     }

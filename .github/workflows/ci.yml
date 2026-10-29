@@ -37,9 +37,12 @@ jobs:
         run: pnpm openapi:export
       - name: openapi.json must be committed and up to date
         run: |
-          if [ -n "$(git status --porcelain -- openapi.json)" ]; then
+          if ! git ls-files --error-unmatch openapi.json > /dev/null 2>&1; then
+            echo "openapi.json is not committed: run 'pnpm openapi:export' and commit it"
+            exit 1
+          fi
+          if ! git diff --exit-code -- openapi.json; then
             echo "openapi.json is out of date: run 'pnpm openapi:export' and commit the result"
-            git diff -- openapi.json
             exit 1
           fi
       - name: Unit and e2e tests with the coverage gate
